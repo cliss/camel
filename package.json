@@ -1,0 +1,24 @@
+{
+  "name": "CamelBlog",
+  "version": "0.0.1K",
+  "description": "Barebones blogging software",
+  "main": "camel.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Casey Liss <casey@caseyliss.com>",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^3.5.0",
+    "rss": "^0.3.2",
+    "q-io": "^1.11.0",
+    "static": "^2.0.0",
+    "sugar": "^1.4.1",
+    "underscore": "^1.6.0",
+    "marked": "^0.3.2",
+    "handlebars": "^2.0.0"
+  },
+  "engines": {
+    "node": "0.10.x"
+  }
+}
