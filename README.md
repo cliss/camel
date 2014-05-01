@@ -35,6 +35,14 @@ and used from that point forward.
 
 * There's a group of "statics" near the top of the file
 * The parameters in the `/rss` route will need to be modified.
+* It's worth noting there are some [Handlebars][hb] templates in use:
+    * `index.md`
+        * `@@ DayTemplate` - used to render a day
+        * `@@ ArticlePartial` – used to render a single article in a day
+        * `@@ FooterTemplate` - used to render pagination
+    * `postHeader.html` - Placed on every post between the site header and post content
+
+[hb]: http://handlebarsjs.com/
 
 ## Files
 
@@ -52,12 +60,17 @@ To use Camel, the following files are required:
       |     |   Site header (top of every page)
       |     +-- footer.html
       |     |   Site footer (bottom of every page)
-      |     `-- postHeader
-      |         Post header (top of every post, after the site header)
+      |     `-- postHeader.html
+      |         Post header (top of every post, after the site header. Handlebars template.)
       +-- public/
       |     `-- Any static files, such as non-blog pages/images/css/javascript/etc.
       `-- posts/
-          All the posts are here, ordered by day. For example:
+          All the pages & posts are here. Pages in the root, posts ordered by day. For example:
+            +-- index.md
+            |   Root file; note that DayTemplate, ArticlePartial, and FooterTemplate are
+            |   all Handlebars templates
+            +-- about.md
+            |   Sample about page
             +-- 2014
             |   Year
             |     +-- 4
