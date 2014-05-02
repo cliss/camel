@@ -28,7 +28,7 @@ var metadataMarker = '@@';
 var maxCacheSize = 50;
 var postsPerPage = 10;
 var postRegex = /^(.\/)?posts\/\d{4}\/\d{1,2}\/\d{1,2}\/(\w|-)*(.md)?/;
-var utcOffset = -5;
+var utcOffset = 5;
 
 var renderedPosts = {};
 var renderedRss = {};
@@ -205,7 +205,7 @@ function generateBodyHtmlForFile(file) {
     var body = marked(parts['body']);
     var metadata = parseMetadata(parts['metadata']);
     metadata['link'] = externalFilenameForFile(file);
-    return postHeaderTemplate(metadata) + body;
+    return body;
 }
 
 // Gets the external relative name/link for this file

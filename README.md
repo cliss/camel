@@ -71,18 +71,18 @@ To use Camel, the following files are required:
             |   all Handlebars templates
             +-- about.md
             |   Sample about page
-            +-- 2014
+            +-- 2014/
             |   Year
-            |     +-- 4
+            |     +-- 4/
             |     |   Month
-            |     |   +-- 29
+            |     |   +-- 29/
             |     |   |   Day
             |     |   |    `-- some-blog-post.md
-            |     |   `-- 30
+            |     |   `-- 30/
             |     |        +-- some-other-post.md
             |     |        `-- yet-another-post.md
-            |     `-- 5
-            |         `-- 1
+            |     `-- 5/
+            |         `-- 1/
             |             `-- newest-blog-post.md
             `-- etc.
 
