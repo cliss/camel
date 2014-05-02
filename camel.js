@@ -494,10 +494,48 @@ app.get('/rss', function (request, response) {
     }
 });
 
+// Year view
+app.get('/:year', function (request, response) {
+  var path = postsRoot + request.params.year;
+  var postsByDay = {};
+
+  qfs.listTree(path, function (name, stat) {
+    return name.endsWith('.md');
+  }).then(function (files) {
+      _.each(files, function (file) {
+        // Gather by day of month
+        var metadata = generateHtmlAndMetadataForFile(file)['metadata'];
+        var date = Date.create(metadata['Date']);
+        var dayOfMonth = date.getDate();
+        if (postsByDay[dayOfMonth] == undefined) {
+          postsByDay[dayOfMonth] = [];
+        }
+
+        postsByDay[dayOfMonth].push({title: metadata['Title'], date: date, url: externalFilenameForFile(file)});
+      });
+
+      var html = "";
+      // Get the days of the month, reverse ordered.
+      var orderedKeys = _.sortBy(Object.keys(postsByDay), function (key) { return parseInt(key); }).reverse();
+      // For each day of the month...
+      _.each(orderedKeys, function (key) {
+        var day = new Date(request.params.year, request.params.month - 1, parseInt(key));
+        html += "<h1>Posts from " + request.params.year + '</h1><ul>';
+        _.each(postsByDay[key], function (post) {
+          html += '<li><a href="' + post['url'] + '">' + post['title']  + '</a></li>';
+        });
+        html += '</ul>';
+      });
+
+      var header = headerSource.replace(metadataMarker + 'Title' + metadataMarker, "Day Listing");
+      response.send(header + html + footerSource);
+    });
+});
+
 // Month view
 app.get('/:year/:month', function (request, response) {
     var path = postsRoot + request.params.year + '/' + request.params.month;
-
+    var dirDate = Date.create(request.params.month + '/1/' + request.params.year);
     var postsByDay = {};
 
     qfs.listTree(path, function (name, stat) {
@@ -521,14 +559,14 @@ app.get('/:year/:month', function (request, response) {
          // For each day of the month...
          _.each(orderedKeys, function (key) {
              var day = new Date(request.params.year, request.params.month - 1, parseInt(key));
-             html += "<h1>" + day.format('{Weekday}, {Month} {d}') + '</h1><ul>';
+             html += "<h1>Posts from " + dirDate.format('{Month}') + '</h1><ul>';
              _.each(postsByDay[key], function (post) {
                  html += '<li><a href="' + post['url'] + '">' + post['title']  + '</a></li>';
              });
              html += '</ul>';
          });
 
-         var header = headerSource.replace(metadataMarker + 'Title' + metadataMarker, "Day Listing");
+         var header = headerSource.replace(metadataMarker + 'Title' + metadataMarker, "Month Listing");
          response.send(header + html + footerSource);
     });
  });
