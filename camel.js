@@ -22,20 +22,8 @@ app.configure(function() {
 });
 
 // "Statics"
-var postsRoot = './posts/';
-var templateRoot = './templates/';
-var metadataMarker = '@@';
-var maxCacheSize = 50;
-var postsPerPage = 10;
-var postRegex = /^(.\/)?posts\/\d{4}\/\d{1,2}\/\d{1,2}\/(\w|-)*(.md)?/;
-var utcOffset = 5;
-
-var renderedPosts = {};
-var renderedRss = {};
-var headerSource = undefined;
-var footerSource = null;
-var postHeaderTemplate = null;
-var siteMetadata = {};
+var config = require('./server/config/config');
+var cache = require('./server/utils/cache');
 
 /***************************************************
  * HELPER METHODS                                  *
@@ -44,19 +32,19 @@ var siteMetadata = {};
 function init() {
     loadHeaderFooter('defaultTags.html', function (data) {
         // Note this comes in as a flat string; split on newlines for parsing metadata.
-        siteMetadata = parseMetadata(data.split('\n'));
+      cache.siteMetadata = parseMetadata(data.split('\n'));
 
         // This relies on the above, so nest it.
         loadHeaderFooter('header.html', function (data) {
-            headerSource = performMetadataReplacements(siteMetadata, data);
+          cache.headerSource = performMetadataReplacements(cache.siteMetadata, data);
         });
     });
-    loadHeaderFooter('footer.html', function (data) { footerSource = data; });
+    loadHeaderFooter('footer.html', function (data) { cache.footerSource = data; });
     loadHeaderFooter('postHeader.html', function (data) {
         Handlebars.registerHelper('formatPostDate', function (date) {
             return new Handlebars.SafeString(new Date(date).format('{Weekday} {d} {Month} {yyyy}, {h}:{mm} {TT}'));
         });
-        postHeaderTemplate = Handlebars.compile(data); });
+      cache.postHeaderTemplate = Handlebars.compile(data); });
 
     setInterval(emptyCache, 30000);
 
@@ -70,9 +58,9 @@ function init() {
 }
 
 function loadHeaderFooter(file, completion) {
-    fs.exists(templateRoot + file, function(exists) {
+    fs.exists(config.templateRoot + file, function(exists) {
         if (exists) {
-            fs.readFile(templateRoot + file, {encoding: 'UTF8'}, function (error, data) {
+            fs.readFile(config.templateRoot + file, {encoding: 'UTF8'}, function (error, data) {
                 if (!error) {
                     completion(data);
                 }
@@ -94,18 +82,18 @@ function normalizedFileName(file) {
 
 function addRenderedPostToCache(file, postData) {
     //console.log('Adding to cache: ' + normalizedFileName(file));
-    renderedPosts[normalizedFileName(file)] = _.extend({ file: normalizedFileName(file), date: new Date() }, postData);
+    cache.renderedPosts[normalizedFileName(file)] = _.extend({ file: normalizedFileName(file), date: new Date() }, postData);
 
-    if (_.size(renderedPosts) > maxCacheSize) {
-        var sorted = _.sortBy(renderedPosts, function (post) { return post['date']; });
-        delete renderedPosts[sorted.first()['file']];
+    if (_.size(cache.renderedPosts) > config.maxCacheSize) {
+        var sorted = _.sortBy(cache.renderedPosts, function (post) { return post['date']; });
+        delete cache.renderedPosts[sorted.first()['file']];
     }
 
-    //console.log('Cache has ' + JSON.stringify(_.keys(renderedPosts)));
+    //console.log('Cache has ' + JSON.stringify(_.keys(cache.renderedPosts)));
 }
 
 function fetchFromCache(file) {
-    return renderedPosts[normalizedFileName(file)] || null;
+    return cache.renderedPosts[normalizedFileName(file)] || null;
 }
 
 // Parses the metadata in the file
@@ -113,7 +101,7 @@ function parseMetadata(lines) {
     var retVal = {};
 
     lines.each(function (line) {
-        line = line.replace(metadataMarker, '');
+        line = line.replace(config.metadataMarker, '');
         line = line.compact();
         if (line.has('=')) {
             var firstIndex = line.indexOf('=');
@@ -124,7 +112,7 @@ function parseMetadata(lines) {
     // NOTE: Some metadata is added in generateHtmlAndMetadataForFile().
 
     // Merge with site default metadata
-    Object.merge(retVal, siteMetadata, false, function(key, targetVal, sourceVal) {
+    Object.merge(retVal, config.siteMetadata, false, function(key, targetVal, sourceVal) {
         // Ensure that the file wins over the defaults.
         console.log('overwriting "' + sourceVal + '" with "' + targetVal);
         return targetVal;
@@ -136,7 +124,7 @@ function parseMetadata(lines) {
 function performMetadataReplacements(replacements, haystack) {
     _.keys(replacements).each(function (key) {
         // Ensure that it's a global replacement; non-regex treatment is first-only.
-        haystack = haystack.replace(new RegExp(metadataMarker + key + metadataMarker, 'g'), replacements[key]);
+        haystack = haystack.replace(new RegExp(config.metadataMarker + key + config.metadataMarker, 'g'), replacements[key]);
     });
 
     return haystack;
@@ -147,9 +135,9 @@ function parseHtml(lines, replacements, postHeader) {
     // Convert from markdown
     var body = performMetadataReplacements(replacements, marked(lines));
     // Perform replacements
-    var header = performMetadataReplacements(replacements, headerSource);
+    var header = performMetadataReplacements(replacements, cache.headerSource);
     // Concatenate HTML
-    return header + postHeader + body + footerSource;
+    return header + postHeader + body + cache.footerSource;
 }
 
 // Gets all the lines in a post and separates the metadata from the body
@@ -159,7 +147,7 @@ function getLinesFromPost(file) {
 
     // Extract the pieces
     var lines = data.lines();
-    var metadataLines = _.filter(lines, function (line) { return line.startsWith(metadataMarker); });
+    var metadataLines = _.filter(lines, function (line) { return line.startsWith(config.metadataMarker); });
     var body = _.difference(lines, metadataLines).join('\n');
 
     return {metadata: metadataLines, body: body};
@@ -174,10 +162,10 @@ function generateHtmlAndMetadataForFile(file) {
         metadata['File'] = file;
         metadata['link'] = externalFilenameForFile(file);
         // If this is a post, assume a body class of 'post'.
-        if (postRegex.test(file)) {
+        if (config.postRegex.test(file)) {
             metadata['BodyClass'] = 'post';
         }
-        var html =  parseHtml(lines['body'], metadata, postHeaderTemplate(metadata));
+        var html =  parseHtml(lines['body'], metadata, cache.postHeaderTemplate(metadata));
         addRenderedPostToCache(file, {
             metadata: metadata,
             body: html,
@@ -218,7 +206,7 @@ function externalFilenameForFile(file, request) {
     var hostname = request != undefined ? request.headers.host : '';
 
     var retVal = hostname.length ? ('http://' + hostname) : '';
-    retVal += '/' + file.replace('.md', '').replace(postsRoot, '').replace(postsRoot.replace('./', ''), '');
+    retVal += '/' + file.replace('.md', '').replace(config.postsRoot, '').replace(config.postsRoot.replace('./', ''), '');
     return retVal;
 }
 
@@ -240,8 +228,8 @@ function externalFilenameForFile(file, request) {
 //                +-- ...
 //                `-- (Article Object)
 function allPostsSortedAndGrouped(completion) {
-    qfs.listTree(postsRoot, function (name, stat) {
-        return postRegex.test(name);
+    qfs.listTree(config.postsRoot, function (name, stat) {
+        return config.postRegex.test(name);
     }).then(function (files) {
         // Lump the posts together by day
         var groupedFiles = _.groupBy(files, function (file) {
@@ -295,7 +283,7 @@ function allPostsPaginated(completion) {
             count += day['articles'].length;
             thisPageDays.push(day);
             // Reset count if need be
-            if (count >= postsPerPage) {
+            if (count >= config.postsPerPage) {
                 pages.push({ page: pages.length + 1, days: thisPageDays });
                 thisPageDays = [];
                 count = 0;
@@ -312,8 +300,8 @@ function allPostsPaginated(completion) {
 
 // Empties the caches.
 function emptyCache() {
-    renderedPosts = {};
-    renderedRss = {};
+  cache.renderedPosts = {};
+  cache.renderedRss = {};
 }
 
 /***************************************************
@@ -402,7 +390,7 @@ app.get('/', function (request, response) {
     baseRouteHandler('/?p=' + page, function (cachedData) {
         response.send(cachedData['body']);
     }, function (completion) {
-        var indexInfo = generateHtmlAndMetadataForFile(postsRoot + 'index.md');
+        var indexInfo = generateHtmlAndMetadataForFile(config.postsRoot + 'index.md');
         Handlebars.registerHelper('formatDate', function (date) {
             return new Handlebars.SafeString(new Date(date).format('{Weekday}<br />{d}<br />{Month}<br />{yyyy}'));
         });
@@ -434,25 +422,25 @@ app.get('/', function (request, response) {
                 footerData['nextPage'] = page + 1;
             }
 
-            var metadata = generateMetadataForFile(postsRoot + 'index.md');
-            var header = performMetadataReplacements(metadata, headerSource);
+            var metadata = generateMetadataForFile(config.postsRoot + 'index.md');
+            var header = performMetadataReplacements(metadata, cache.headerSource);
             // Replace <title>...</title> with one-off for homepage, because it doesn't show both Page & Site titles.
             var titleBegin = header.indexOf('<title>') + "<title>".length;
             var titleEnd = header.indexOf('</title>');
             header = header.substring(0, titleBegin) + metadata['SiteTitle'] + header.substring(titleEnd);
             // Carry on with body
             bodyHtml = performMetadataReplacements(metadata, bodyHtml);
-            var fullHtml = header + bodyHtml + footerTemplate(footerData) + footerSource;
+            var fullHtml = header + bodyHtml + footerTemplate(footerData) + cache.footerSource;
             completion(fullHtml);
         });
     });
 });
 
 app.get('/rss', function (request, response) {
-    if (renderedRss['date'] == undefined || new Date().getTime() - renderedRss['date'].getTime() > 3600000) {
+    if (cache.renderedRss['date'] == undefined || new Date().getTime() - cache.renderedRss['date'].getTime() > 3600000) {
         var feed = new rss({
-            title: siteMetadata['SiteTitle'],
-            description: 'Posts to ' + siteMetadata['SiteTitle'],
+            title: cache.siteMetadata['SiteTitle'],
+            description: 'Posts to ' + cache.siteMetadata['SiteTitle'],
             feed_url: 'http://www.yoursite.com/rss',
             site_url: 'http://www.yoursite.com',
             author: 'Your Name',
@@ -474,7 +462,7 @@ app.get('/rss', function (request, response) {
                         feed.item({
                             title: article['metadata']['Title'],
                             // Offset the time because Heroku's servers are GMT, whereas these dates are EST/EDT.
-                            date: new Date(article['metadata']['Date']).addHours(utcOffset),
+                            date: new Date(article['metadata']['Date']).addHours(config.utcOffset),
                             url: externalFilenameForFile(article['metadata']['File'], request),
                             description: article['unwrappedBody']
                         });
@@ -482,21 +470,21 @@ app.get('/rss', function (request, response) {
                 });
             });
 
-            renderedRss = {
+          cache.renderedRss = {
                 date: new Date(),
                 rss: feed.xml()
             };
 
-            response.send(renderedRss['rss']);
+            response.send(cache.renderedRss['rss']);
         });
     } else {
-        response.send(renderedRss['rss']);
+        response.send(cache.renderedRss['rss']);
     }
 });
 
 // Year view
 app.get('/:year', function (request, response) {
-  var path = postsRoot + request.params.year;
+  var path = config.postsRoot + request.params.year;
   var postsByDay = {};
 
   qfs.listTree(path, function (name, stat) {
@@ -527,14 +515,14 @@ app.get('/:year', function (request, response) {
         html += '</ul>';
       });
 
-      var header = headerSource.replace(metadataMarker + 'Title' + metadataMarker, "Day Listing");
-      response.send(header + html + footerSource);
+      var header = cache.headerSource.replace(config.metadataMarker + 'Title' + config.metadataMarker, "Day Listing");
+      response.send(header + html + cache.footerSource);
     });
 });
 
 // Month view
 app.get('/:year/:month', function (request, response) {
-    var path = postsRoot + request.params.year + '/' + request.params.month;
+    var path = config.postsRoot + request.params.year + '/' + request.params.month;
     var dirDate = Date.create(request.params.month + '/1/' + request.params.year);
     var postsByDay = {};
 
@@ -566,14 +554,14 @@ app.get('/:year/:month', function (request, response) {
              html += '</ul>';
          });
 
-         var header = headerSource.replace(metadataMarker + 'Title' + metadataMarker, "Month Listing");
-         response.send(header + html + footerSource);
+         var header = cache.headerSource.replace(config.metadataMarker + 'Title' + config.metadataMarker, "Month Listing");
+         response.send(header + html + cache.footerSource);
     });
  });
 
 // Day view
 app.get('/:year/:month/:day', function (request, response) {
-    var path = postsRoot + request.params.year + '/' + request.params.month + '/' + request.params.day;
+    var path = config.postsRoot + request.params.year + '/' + request.params.month + '/' + request.params.day;
 
     // Get all the files in the directory
     fs.readdir(path, function (error, files) {
@@ -602,15 +590,14 @@ app.get('/:year/:month/:day', function (request, response) {
             html += '<li><a href="' + post['metadata']['link'] + '">' + post['metadata']['Title'] + '</a></li>';
         });
 
-        var header = headerSource.replace(metadataMarker + 'Title' + metadataMarker, day.format('{Weekday}, {Month} {d}'));
-        response.send(header + html + footerSource);
+        var header = cache.headerSource.replace(config.metadataMarker + 'Title' + config.metadataMarker, day.format('{Weekday}, {Month} {d}'));
+        response.send(header + html + cache.footerSource);
     })
  });
 
-
 // Get a blog post, such as /2014/3/17/birthday
 app.get('/:year/:month/:day/:slug', function (request, response) {
-    var file = postsRoot + request.params.year + '/' + request.params.month + '/' + request.params.day + '/' + request.params.slug;
+    var file = config.postsRoot + request.params.year + '/' + request.params.month + '/' + request.params.day + '/' + request.params.slug;
 
     loadAndSendMarkdownFile(file, response);
 });
@@ -625,7 +612,7 @@ app.get('/:year/:month/:day/:slug', function (request, response) {
 app.get('/:slug', function (request, response) {
     // If this is a typical slug, send the file
     if (isNaN(request.params.slug)) {
-        var file = postsRoot + request.params.slug;
+        var file = config.postsRoot + request.params.slug;
         loadAndSendMarkdownFile(file, response);
     // If it's a year, handle that.
     } else {
