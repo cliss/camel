@@ -458,6 +458,7 @@ app.get('/rss', function (request, response) {
             author: 'Your Name',
             webMaster: 'Your Name',
             copyright: '2013-' + new Date().getFullYear() + ' Your Name',
+            image_url: 'http://www.yoursite.com/images/favicon.png',
             language: 'en',
             //categories: ['Category 1','Category 2','Category 3'],
             pubDate: new Date().toString(),

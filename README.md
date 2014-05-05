@@ -136,7 +136,6 @@ things that can and/or should be improved:
 * The year listing is not implemented. For example, `/2014`.
 * There are a few places where things are repeated, and/or simply not as efficient as they should be.
 * Need to investigate whether or not some cached data is repeated (efficiency not behavioral issue)
-* RSS entries shouldn't include the post header.
 
 [c]: http://www.caseyliss.com/
 
