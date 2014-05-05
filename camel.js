@@ -58,6 +58,9 @@ function init() {
         Handlebars.registerHelper('formatPostDate', function (date) {
             return new Handlebars.SafeString(new Date(date).format('{Weekday} {d} {Month} {yyyy}, {h}:{mm} {TT}'));
         });
+        Handlebars.registerHelper('formatIsoDate', function (date) {
+            return new Handlebars.SafeString(date !== undefined ? new Date(date).iso() : '');
+        });
         postHeaderTemplate = Handlebars.compile(data); });
 
     // Kill the cache every 30 minutes.
