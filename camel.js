@@ -490,6 +490,7 @@ app.get('/', function (request, response) {
 });
 
 app.get('/rss', function (request, response) {
+    response.type('application/rss+xml');
     if (renderedRss['date'] == undefined || new Date().getTime() - renderedRss['date'].getTime() > 3600000) {
         var feed = new rss({
             title: siteMetadata['SiteTitle'],
