@@ -101,13 +101,15 @@ There are a couple of quirks, which don't bother me, but may bother you.
 
 ## Adding a Post
 
-When a new post is created, you'll want to restart the app in order to clear the caches.
-There is a commented out route /tosscache that will also do this job, if you choose to
-enable it.
+When a new post is created, if you want an instant refresh, you'll want to restart the
+app in order to clear the caches. There is a commented out route /tosscache that will also
+do this job, if you choose to enable it.
 
-There is no mechanism within Camel for transporting a post to the `posts/` directory.
-It is assumed that delivery will happen by way of a `git push` or equivalent. That is,
-for example, how it would work when run on [Heroku][h].
+Otherwise, the internal caches will reset every 30 minutes.
+
+Additionally, there is no mechanism within Camel for transporting a post to the `posts/`
+directory. It is assumed that delivery will happen by way of a `git push` or equivalent.
+That is, for example, how it would work when run on [Heroku][h].
 
 [h]: http://www.heroku.com/
 
@@ -128,13 +130,10 @@ quite a few more than 10 posts if, say, on one lucrative day there are 15 posts.
 Pagingation is only necessary on the homepage, and page numbers are 1-based. Pages greater than
 1 are loaded by passing the query string parameter p. For example, `hostname/?p=3` for page 3.
 
-# To Do
+# Status
 
-Camel is functional, and is presently running [www.caseyliss.com][c]. However, there are a few
-things that can and/or should be improved:
-
-* The year listing is not implemented. For example, `/2014`.
-* There are a few places in the code where things are repeated, and/or simply not as efficient as they should be.
+Camel is functional, and is presently running [www.caseyliss.com][c]. It could probably stand
+to be cleaned up a little bit, but it is considered feature complete.
 
 [c]: http://www.caseyliss.com/
 

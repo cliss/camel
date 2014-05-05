@@ -29,9 +29,11 @@ var maxCacheSize = 50;
 var postsPerPage = 10;
 var postRegex = /^(.\/)?posts\/\d{4}\/\d{1,2}\/\d{1,2}\/(\w|-)*(.md)?/;
 var utcOffset = 5;
+var cacheResetTimeInMillis = 1800000;
 
 var renderedPosts = {};
 var renderedRss = {};
+var allPostsSortedGrouped = {};
 var headerSource = undefined;
 var footerSource = null;
 var postHeaderTemplate = null;
@@ -58,7 +60,8 @@ function init() {
         });
         postHeaderTemplate = Handlebars.compile(data); });
 
-    setInterval(emptyCache, 30000);
+    // Kill the cache every 30 minutes.
+    setInterval(emptyCache, cacheResetTimeInMillis);
 
     marked.setOptions({
         renderer: new marked.Renderer(),
@@ -240,44 +243,49 @@ function externalFilenameForFile(file, request) {
 //                +-- ...
 //                `-- (Article Object)
 function allPostsSortedAndGrouped(completion) {
-    qfs.listTree(postsRoot, function (name, stat) {
-        return postRegex.test(name);
-    }).then(function (files) {
-        // Lump the posts together by day
-        var groupedFiles = _.groupBy(files, function (file) {
-            var parts = file.split('/');
-            return new Date(parts[1], parts[2] - 1, parts[3]);
-        });
-
-        // Sort the days from newest to oldest
-        var retVal = [];
-        var sortedKeys = _.sortBy(_.keys(groupedFiles), function (date) {
-            return new Date(date);
-        }).reverse();
-
-        // For each day...
-        _.each(sortedKeys, function (key) {
-            // Get all the filenames...
-            var articleFiles = groupedFiles[key];
-            var articles = [];
-            // ...get all the data for that file ...
-            _.each(articleFiles, function (file) {
-                articles.push(generateHtmlAndMetadataForFile(file));
+    if (Object.size(allPostsSortedGrouped) != 0) {
+        completion(allPostsSortedGrouped);
+    } else {
+        qfs.listTree(postsRoot, function (name, stat) {
+            return postRegex.test(name);
+        }).then(function (files) {
+            // Lump the posts together by day
+            var groupedFiles = _.groupBy(files, function (file) {
+                var parts = file.split('/');
+                return new Date(parts[1], parts[2] - 1, parts[3]);
             });
 
-            // ...so we can sort the posts...
-            articles = _.sortBy(articles, function (article) {
-                // ...by their post date and TIME.
-                return Date.create(article['metadata']['Date']);
+            // Sort the days from newest to oldest
+            var retVal = [];
+            var sortedKeys = _.sortBy(_.keys(groupedFiles), function (date) {
+                return new Date(date);
             }).reverse();
-            // Array of objects; each object's key is the date, value
-            // is an array of objects
-            // In that array of objects, there is a body & metadata.
-            retVal.push({date: key, articles: articles});
-        });
 
-        completion(retVal);
-    });
+            // For each day...
+            _.each(sortedKeys, function (key) {
+                // Get all the filenames...
+                var articleFiles = groupedFiles[key];
+                var articles = [];
+                // ...get all the data for that file ...
+                _.each(articleFiles, function (file) {
+                    articles.push(generateHtmlAndMetadataForFile(file));
+                });
+
+                // ...so we can sort the posts...
+                articles = _.sortBy(articles, function (article) {
+                    // ...by their post date and TIME.
+                    return Date.create(article['metadata']['Date']);
+                }).reverse();
+                // Array of objects; each object's key is the date, value
+                // is an array of objects
+                // In that array of objects, there is a body & metadata.
+                retVal.push({date: key, articles: articles});
+            });
+
+            allPostsSortedGrouped = retVal;
+            completion(retVal);
+        });
+    }
 }
 
 // Gets all the posts, paginated.
@@ -312,8 +320,10 @@ function allPostsPaginated(completion) {
 
 // Empties the caches.
 function emptyCache() {
+    console.log('Emptying the cache.');
     renderedPosts = {};
     renderedRss = {};
+    allPostsSortedGrouped = {};
 }
 
 /***************************************************
@@ -359,11 +369,42 @@ function loadAndSendMarkdownFile(file, response) {
     }
 }
 
+// Sends a listing of an entire year's posts.
 function sendYearListing(request, response) {
+    var year = request.params.slug;
+    var retVal = '<h1>Posts for ' + year + '</h1>';
+    var currentMonth = null;
 
-    // TODO: Finish this
+    allPostsSortedAndGrouped(function (postsByDay) {
+        postsByDay.each(function (day) {
+            var thisDay = Date.create(day['date']);
+            if (thisDay.is(year)) {
+                // Date.isBetween() is not inclusive, so back the from date up one
+                var thisMonth = new Date(Number(year), Number(currentMonth)).addDays(-1);
+                // ...and advance the to date by two (one to offset above, one to genuinely add).
+                var nextMonth = Date.create(thisMonth).addMonths(1).addDays(2);
 
-    response.send(500, {error: "Casey hasn't written this yet."});
+                //console.log(thisMonth.short() + ' <-- ' + thisDay.short() + ' --> ' + nextMonth.short() + '?   ' + (thisDay.isBetween(thisMonth, nextMonth) ? 'YES' : 'NO'));
+                if (currentMonth == null || !thisDay.isBetween(thisMonth, nextMonth)) {
+                    // If we've started a month list, end it, because we're on a new month now.
+                    if (currentMonth >= 0) {
+                        retVal += '</ul>'
+                    }
+
+                    currentMonth = thisDay.getMonth();
+                    retVal += '<h2><a href="/' + year + '/' + (currentMonth + 1) + '/">' + thisDay.format('{Month}') + '</a></h2>\n<ul>';
+                }
+
+                day['articles'].each(function (article) {
+                    retVal += '<li><a href="' + externalFilenameForFile(article['file']) + '">' + article['metadata']['Title'] + '</a></li>';
+                });
+            }
+        });
+
+        var header = headerSource.replace(metadataMarker + 'Title' + metadataMarker, 'Posts for ' + year);
+        response.send(header + retVal + footerSource);
+    });
+
 }
 
 // Handles a route by trying the cache first.
