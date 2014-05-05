@@ -171,8 +171,8 @@ function generateHtmlAndMetadataForFile(file) {
     if (retVal == undefined) {
         var lines = getLinesFromPost(file);
         var metadata = parseMetadata(lines['metadata']);
-        metadata['File'] = file;
-        metadata['link'] = externalFilenameForFile(file);
+        metadata['relativeLink'] = externalFilenameForFile(file);
+        metadata['header'] = postHeaderTemplate(metadata);
         // If this is a post, assume a body class of 'post'.
         if (postRegex.test(file)) {
             metadata['BodyClass'] = 'post';
@@ -181,7 +181,6 @@ function generateHtmlAndMetadataForFile(file) {
         addRenderedPostToCache(file, {
             metadata: metadata,
             body: html,
-            lines: lines,
             unwrappedBody: performMetadataReplacements(metadata, generateBodyHtmlForFile(file)) }
         );
     }
@@ -204,7 +203,7 @@ function generateBodyHtmlForFile(file) {
     var parts = getLinesFromPost(file);
     var body = marked(parts['body']);
     var metadata = parseMetadata(parts['metadata']);
-    metadata['link'] = externalFilenameForFile(file);
+    metadata['relativeLink'] = externalFilenameForFile(file);
     return body;
 }
 
@@ -218,7 +217,8 @@ function externalFilenameForFile(file, request) {
     var hostname = request != undefined ? request.headers.host : '';
 
     var retVal = hostname.length ? ('http://' + hostname) : '';
-    retVal += '/' + file.replace('.md', '').replace(postsRoot, '').replace(postsRoot.replace('./', ''), '');
+    retVal += file.at(0) == '/' && hostname.length > 0 ? '' : '/';
+    retVal += file.replace('.md', '').replace(postsRoot, '').replace(postsRoot.replace('./', ''), '');
     return retVal;
 }
 
@@ -476,7 +476,7 @@ app.get('/rss', function (request, response) {
                             title: article['metadata']['Title'],
                             // Offset the time because Heroku's servers are GMT, whereas these dates are EST/EDT.
                             date: new Date(article['metadata']['Date']).addHours(utcOffset),
-                            url: externalFilenameForFile(article['metadata']['File'], request),
+                            url: externalFilenameForFile(article['file'], request),
                             description: article['unwrappedBody']
                         });
                     }
@@ -562,7 +562,7 @@ app.get('/:year/:month/:day', function (request, response) {
 
         postsToday.each(function (post) {
             var title = post['metadata']['Title'];
-            html += '<li><a href="' + post['metadata']['link'] + '">' + post['metadata']['Title'] + '</a></li>';
+            html += '<li><a href="' + post['metadata']['relativeLink'] + '">' + post['metadata']['Title'] + '</a></li>';
         });
 
         var header = headerSource.replace(metadataMarker + 'Title' + metadataMarker, day.format('{Weekday}, {Month} {d}'));
