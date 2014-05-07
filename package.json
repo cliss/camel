@@ -2,7 +2,27 @@
   "name": "Camel",
   "version": "1.0.0",
   "description": "Barebones blogging software",
+  "keywords": [
+      "blog",
+      "blogging"
+  ],
   "main": "camel.js",
+  "homepage": "http://github.com/cliss/camel/",
+  "repository": {
+      "type": "git",
+      "url": "https://github.com/cliss/camel.git"
+  },
+  "author": {
+      "name": "Casey Liss",
+      "url": "http://www.caseyliss.com/"
+  },
+  "contributors": [
+      {
+          "name": "Ben Elsen",
+          "url": "http://benelsen.com/"
+      }
+  ],
+  "bugs": "https://github.com/cliss/camel/issues",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
