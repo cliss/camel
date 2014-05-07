@@ -16,7 +16,7 @@ More specifically, the design goals were:
 
 # Approach
 
-Thus, Camel is neither a static blogging platform nor a truly dynamic one. It is a little
+Camel is neither a static blogging platform nor a truly dynamic one. It is a little
 from column A, and a little from column B. The first time a post is loaded, it is rendered
 by converting from Markdown to HTML, and then postpocessed by adding headers & footer, as well
 as making metadata replacements. Upon a completed render, the resultant HTML is stored
@@ -35,6 +35,11 @@ and used from that point forward.
 
 * There's a group of "statics" near the top of the file
 * The parameters in the `/rss` route will need to be modified.
+* The headers/footer:
+    * `header.html` - site header; shown at the top of every page
+    * `footer.html` - site footer; shown at the bottom of every page
+    * `defaultTags.html` - default metadata; merged with page metadata (page wins)
+    * `postHeader.html` - post header; shown at the top of every post not marked with `@@ HideHeader=true`. See below.
 * It's worth noting there are some [Handlebars][hb] templates in use:
     * `index.md`
         * `@@ DayTemplate` - used to render a day
@@ -63,7 +68,7 @@ To use Camel, the following files are required:
       |     `-- postHeader.html
       |         Post header (top of every post, after the site header. Handlebars template.)
       +-- public/
-      |     `-- Any static files, such as non-blog pages/images/css/javascript/etc.
+      |     `-- Any static files, such as images/css/javascript/etc.
       `-- posts/
           All the pages & posts are here. Pages in the root, posts ordered by day. For example:
             +-- index.md
@@ -102,7 +107,7 @@ There are a couple of quirks, which don't bother me, but may bother you.
 ## Adding a Post
 
 When a new post is created, if you want an instant refresh, you'll want to restart the
-app in order to clear the caches. There is a commented out route /tosscache that will also
+app in order to clear the caches. There is a commented out route `/tosscache` that will also
 do this job, if you choose to enable it.
 
 Otherwise, the internal caches will reset every 30 minutes.
@@ -120,12 +125,12 @@ Partly due to laziness, and partly because it seems better, pagination isn't str
 than always cutting off a page afer N posts, instead, pagination is handled differently.
 
 Starting with the most recent day's posts, all the posts in that day are added to a logical
-page. Once that page contains 10 *or more* posts, that page is considered complete. The next
+page. Once that page contains N *or more* posts, that page is considered complete. The next
 page is then started.
 
 Therefore, all the posts in a single day will __always__ be on the same page. That, in turns, means
-that pages will have *at least* 10 posts, but possibly more. In fact, a single page could have
-quite a few more than 10 posts if, say, on one lucrative day there are 15 posts.
+that pages will have *at least* N posts, but possibly more. In fact, a single page could have
+quite a few more than N posts if, say, on one lucrative day there are 1.5*N or 2*N posts.
 
 Pagingation is only necessary on the homepage, and page numbers are 1-based. Pages greater than
 1 are loaded by passing the query string parameter p. For example, `hostname/?p=3` for page 3.
@@ -140,3 +145,7 @@ to be cleaned up a little bit, but it is considered feature complete.
 # License
 
 Camel is MIT-Licensed.
+
+Should you happen to use Camel, I'd love to know. Please [contact me][co].
+
+[co]: http://www.caseyliss.com/contact
