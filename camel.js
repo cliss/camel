@@ -3,6 +3,7 @@
  ***************************************************/
 
 var express = require('express');
+var compress = require('compression');
 var http = require('http');
 var fs = require('fs');
 var qfs = require('q-io/fs');
@@ -13,13 +14,9 @@ var rss = require('rss');
 var Handlebars = require('handlebars');
 
 var app = express();
+app.use(compress());
+app.use(express.static("public"));
 var server = http.createServer(app);
-
-app.configure(function() {
-    app.use(express.compress());
-	app.use(express.bodyParser());
-	app.use(express.static("public"));
-});
 
 // "Statics"
 var postsRoot = './posts/';
