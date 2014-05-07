@@ -1,13 +1,13 @@
 {
-  "name": "CamelBlog",
-  "version": "0.0.1K",
+  "name": "Camel",
+  "version": "1.0.0",
   "description": "Barebones blogging software",
   "main": "camel.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Casey Liss <casey@caseyliss.com>",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "express": "^3.5.0",
     "rss": "^0.3.2",
