@@ -122,7 +122,7 @@ That is, for example, how it would work when run on [Heroku][h].
 
 Camel uses a semi-peculiar pagination model which is being referred to as "loose pagination".
 Partly due to laziness, and partly because it seems better, pagination isn't strict. Rather
-than always cutting off a page afer N posts, instead, pagination is handled differently.
+than always cutting off a page after N posts, instead, pagination is handled differently.
 
 Starting with the most recent day's posts, all the posts in that day are added to a logical
 page. Once that page contains N *or more* posts, that page is considered complete. The next
