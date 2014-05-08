@@ -26,10 +26,12 @@ and used from that point forward.
 
 ## Installation
 
-1. Install Node & NPM
+1. Install [Node][n] & [npm][npm]
 2. Clone the repository
 3. Get all the dependencies using NPM: `npm install`
 4. `node ./camel.js`
+
+[npm]: https://www.npmjs.org/
 
 ## Configuration
 
