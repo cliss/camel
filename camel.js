@@ -2,12 +2,12 @@
  * INITIALIZATION                                  *
  ***************************************************/
 
-var express = require('express')
-  , compress = require('compression')
-  , http = require('http')
-  , fs = require('fs')
-  , sugar = require('sugar')
-  , rss = require('rss');
+var express   = require('express')
+  , compress  = require('compression')
+  , http      = require('http')
+  , fs        = require('fs')
+  , sugar     = require('sugar')
+  , rss       = require('rss');
 
 var app = express();
 
@@ -37,7 +37,7 @@ app.sources = {
 }
 
 routes = require('./routes')(app)
-require('./lib/app_helpers')(app)
+require('./helpers')(app)
 
 app.use(compress());
 app.use(express.static("public"));
@@ -46,7 +46,6 @@ app.use(routes)
 app.init();
 
 var server = http.createServer(app);
-
 
 server.listen(Number(process.env.PORT || 5000));
 console.log('Express server started on port %s', server.address().port);

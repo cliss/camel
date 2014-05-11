@@ -1,10 +1,9 @@
-var express = require('express')
-  , router  = express.Router()
-  , Handlebars = require('handlebars');
+var express        = require('express')
+  , router         = express.Router()
+  , Handlebars     = require('handlebars')
+  , qfs            = require('q-io/fs')
 
 routes = function(app) {
-  var helpers = require('./helpers')(app);
-
   router.get('/', function (request, response) {
     // Determine which page we're on, and make that the filename
     // so we cache by paginated page.
@@ -17,7 +16,7 @@ routes = function(app) {
     }
 
     // Do the standard route handler. Cough up a cached page if possible.
-    helpers.baseRouteHandler('/?p=' + page, function (cachedData) {
+    app.baseRouteHandler('/?p=' + page, function (cachedData) {
       response.send(cachedData['body']);
     }, function (completion) {
       var indexInfo = app.generateHtmlAndMetadataForFile(app.options.postsRoot + 'index.md');
@@ -117,13 +116,20 @@ routes = function(app) {
   // Month view
   router.get('/:year/:month', function (request, response) {
     var path = app.options.postsRoot + request.params.year + '/' + request.params.month;
+    console.log('1')
 
     var postsByDay = {};
 
     qfs.listTree(path, function (name, stat) {
+      console.log('1.2')
       return name.endsWith('.md');
     }).then(function (files) {
+      console.log('2')
+      console.log(JSON.stringify(files))
+
+
       _.each(files, function (file) {
+        console.log(2.1)
         // Gather by day of month
         var metadata = app.generateHtmlAndMetadataForFile(file)['metadata'];
         var date = Date.create(metadata['Date']);
@@ -134,6 +140,9 @@ routes = function(app) {
 
         postsByDay[dayOfMonth].push({title: metadata['Title'], date: date, url: externalFilenameForFile(file)});
       });
+
+      console.log('3')
+
 
       var html = "";
       // Get the days of the month, reverse ordered.
@@ -148,7 +157,13 @@ routes = function(app) {
         html += '</ul>';
       });
 
-      var header = headerSource.replace(metadataMarker + 'Title' + metadataMarker, "Day Listing");
+      console.log('4')
+
+
+      var header = headerSource.replace(app.options.metadataMarker + 'Title' + app.options.metadataMarker, "Day Listing");
+
+      console.log('5')
+
       response.send(header + html + footerSource);
     });
   });
@@ -184,7 +199,7 @@ routes = function(app) {
         html += '<li><a href="' + post['metadata']['relativeLink'] + '">' + post['metadata']['Title'] + '</a></li>';
       });
 
-      var header = headerSource.replace(metadataMarker + 'Title' + metadataMarker, day.format('{Weekday}, {Month} {d}'));
+      var header = headerSource.replace(app.options.metadataMarker + 'Title' + app.options.metadataMarker, day.format('{Weekday}, {Month} {d}'));
       response.send(header + html + footerSource);
     })
   });
@@ -194,7 +209,7 @@ routes = function(app) {
   router.get('/:year/:month/:day/:slug', function (request, response) {
     var file = app.options.postsRoot + request.params.year + '/' + request.params.month + '/' + request.params.day + '/' + request.params.slug;
 
-    helpers.loadAndSendMarkdownFile(file, response);
+    app.loadAndSendMarkdownFile(file, response);
   });
 
   // Empties the cache.
@@ -208,10 +223,10 @@ routes = function(app) {
     // If this is a typical slug, send the file
     if (isNaN(request.params.slug)) {
       var file = app.options.postsRoot + request.params.slug;
-      helpers.loadAndSendMarkdownFile(file, response);
+      app.loadAndSendMarkdownFile(file, response);
       // If it's a year, handle that.
     } else {
-      helpers.sendYearListing(request, response);
+      app.sendYearListing(request, response);
     }
   });
 
