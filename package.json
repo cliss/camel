@@ -38,7 +38,13 @@
     "handlebars": "^2.0.0",
     "compression": "^1.0.2"
   },
+  "devDependencies": {
+    "jshint": "^2.5.0"
+  },
   "engines": {
     "node": "0.10.x"
+  },
+  "jshintConfig": {
+    "sub": true
   }
 }
