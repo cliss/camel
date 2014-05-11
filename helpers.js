@@ -187,6 +187,7 @@ var appHelpers = function(app) {
       var retVal = hostname.length ? ('http://' + hostname) : '';
       retVal += file.at(0) == '/' && hostname.length > 0 ? '' : '/';
       retVal += file.replace('.md', '').replace(app.options.postsRoot, '').replace(app.options.postsRoot.replace('./', ''), '');
+
       return retVal;
   }
 
@@ -397,6 +398,8 @@ var appHelpers = function(app) {
   app.loadAndSendMarkdownFile = loadAndSendMarkdownFile
   app.sendYearListing = sendYearListing
   app.baseRouteHandler = baseRouteHandler
+  app.externalFilenameForFile = externalFilenameForFile
+  app.allPostsSortedAndGrouped = allPostsSortedAndGrouped
 }
 
 module.exports = appHelpers
