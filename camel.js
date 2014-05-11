@@ -612,7 +612,6 @@ app.get('/:year/:month/:day', function (request, response) {
     });
  });
 
-
 // Get a blog post, such as /2014/3/17/birthday
 app.get('/:year/:month/:day/:slug', function (request, response) {
     var file = postsRoot + request.params.year + '/' + request.params.month + '/' + request.params.day + '/' + request.params.slug;
