@@ -31,7 +31,7 @@ var cacheResetTimeInMillis = 1800000;
 var renderedPosts = {};
 var renderedRss = {};
 var allPostsSortedGrouped = {};
-var headerSource = undefined;
+var headerSource = null;
 var footerSource = null;
 var postHeaderTemplate = null;
 var siteMetadata = {};
@@ -171,7 +171,7 @@ function getLinesFromPost(file) {
 // Gets the metadata & rendered HTML for this file
 function generateHtmlAndMetadataForFile(file) {
     var retVal = fetchFromCache(file);
-    if (retVal == undefined) {
+    if (retVal === undefined) {
         var lines = getLinesFromPost(file);
         var metadata = parseMetadata(lines['metadata']);
         metadata['relativeLink'] = externalFilenameForFile(file);
@@ -217,7 +217,7 @@ function externalFilenameForFile(file) {
 
 // Gets the external absolute link for this file
 function externalFilenameForFile(file, request) {
-    var hostname = request != undefined ? request.headers.host : '';
+    var hostname = request !== undefined ? request.headers.host : '';
 
     var retVal = hostname.length ? ('http://' + hostname) : '';
     retVal += file.at(0) == '/' && hostname.length > 0 ? '' : '/';
@@ -243,7 +243,7 @@ function externalFilenameForFile(file, request) {
 //                +-- ...
 //                `-- (Article Object)
 function allPostsSortedAndGrouped(completion) {
-    if (Object.size(allPostsSortedGrouped) != 0) {
+    if (Object.size(allPostsSortedGrouped) !== 0) {
         completion(allPostsSortedGrouped);
     } else {
         qfs.listTree(postsRoot, function (name, stat) {
@@ -349,14 +349,14 @@ function loadAndSendMarkdownFile(file, response) {
                 response.send(400, {error: 'Markdown file not found.'});
             }
         });
-    } else if (fetchFromCache(file) != null) {
+    } else if (fetchFromCache(file) !== null) {
         // Send the cached version.
         console.log('Sending cached file: ' + file);
         response.send(200, fetchFromCache(file)['body']);
         return;
     } else {
         // Fetch the real deal.
-        console.log('Sending file: ' + file)
+        console.log('Sending file: ' + file);
         fs.exists(file + '.md', function (exists) {
             if (!exists) {
                 response.send(404, {error: 'A post with that address is not found.'});
@@ -385,10 +385,10 @@ function sendYearListing(request, response) {
                 var nextMonth = Date.create(thisMonth).addMonths(1).addDays(2);
 
                 //console.log(thisMonth.short() + ' <-- ' + thisDay.short() + ' --> ' + nextMonth.short() + '?   ' + (thisDay.isBetween(thisMonth, nextMonth) ? 'YES' : 'NO'));
-                if (currentMonth == null || !thisDay.isBetween(thisMonth, nextMonth)) {
+                if (currentMonth === null || !thisDay.isBetween(thisMonth, nextMonth)) {
                     // If we've started a month list, end it, because we're on a new month now.
                     if (currentMonth >= 0) {
-                        retVal += '</ul>'
+                        retVal += '</ul>';
                     }
 
                     currentMonth = thisDay.getMonth();
@@ -413,7 +413,7 @@ function sendYearListing(request, response) {
 // generator: function to generate the raw HTML. Only parameter is a function that takes a completion handler that takes the raw HTML as its parameter.
 // bestRouteHandler() --> generator() to build HTML --> completion() to add to cache and send
 function baseRouteHandler(file, sender, generator) {
-    if (fetchFromCache(file) == null) {
+    if (fetchFromCache(file) === null) {
         generator(function (postData) {
             addRenderedPostToCache(file, {body: postData});
             sender({body: postData});
@@ -432,7 +432,7 @@ app.get('/', function (request, response) {
     // Determine which page we're on, and make that the filename
     // so we cache by paginated page.
     var page = 1;
-    if (request.query.p != undefined) {
+    if (request.query.p !== undefined) {
         page = Number(request.query.p);
         if (isNaN(page)) {
             response.redirect('/');
@@ -491,7 +491,7 @@ app.get('/', function (request, response) {
 
 app.get('/rss', function (request, response) {
     response.type('application/rss+xml');
-    if (renderedRss['date'] == undefined || new Date().getTime() - renderedRss['date'].getTime() > 3600000) {
+    if (renderedRss['date'] === undefined || new Date().getTime() - renderedRss['date'].getTime() > 3600000) {
         var feed = new rss({
             title: siteMetadata['SiteTitle'],
             description: 'Posts to ' + siteMetadata['SiteTitle'],
@@ -551,7 +551,7 @@ app.get('/:year/:month', function (request, response) {
             var metadata = generateHtmlAndMetadataForFile(file)['metadata'];
             var date = Date.create(metadata['Date']);
             var dayOfMonth = date.getDate();
-            if (postsByDay[dayOfMonth] == undefined) {
+            if (postsByDay[dayOfMonth] === undefined) {
                 postsByDay[dayOfMonth] = [];
             }
 
@@ -609,7 +609,7 @@ app.get('/:year/:month/:day', function (request, response) {
 
         var header = headerSource.replace(metadataMarker + 'Title' + metadataMarker, day.format('{Weekday}, {Month} {d}'));
         response.send(header + html + footerSource);
-    })
+    });
  });
 
 
@@ -644,5 +644,5 @@ app.get('/:slug', function (request, response) {
 init();
 var port = Number(process.env.PORT || 5000);
 server.listen(port, function () {
-   console.log('Express server started on port %s', server.address().port); 
+   console.log('Express server started on port %s', server.address().port);
 });

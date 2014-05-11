@@ -14,7 +14,8 @@
   },
   "author": {
       "name": "Casey Liss",
-      "url": "http://www.caseyliss.com/"
+      "url": "http://www.caseyliss.com/",
+      "email": "casey@caseyliss.com"
   },
   "contributors": [
       {
@@ -26,7 +27,6 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Casey Liss <casey@caseyliss.com>",
   "license": "MIT",
   "dependencies": {
     "express": "^4.1.0",
