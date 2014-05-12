@@ -2,12 +2,12 @@
  * INITIALIZATION                                  *
  ***************************************************/
 
-var express   = require('express')
-  , compress  = require('compression')
-  , http      = require('http')
-  , fs        = require('fs')
-  , sugar     = require('sugar')
-  , rss       = require('rss');
+var express   = require('express');
+var compress  = require('compression');
+var http      = require('http');
+var fs        = require('fs');
+var sugar     = require('sugar');
+var rss       = require('rss');
 
 var app = express();
 

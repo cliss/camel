@@ -1,8 +1,8 @@
-var fs           = require('fs')
-  , marked       = require('marked')
-  , Handlebars   = require('handlebars')
-  , qfs          = require('q-io/fs')
-  , _            = require('underscore');
+var fs           = require('fs');
+var marked       = require('marked');
+var Handlebars   = require('handlebars');
+var qfs          = require('q-io/fs');
+var _            = require('underscore');
 
 var appHelpers = function(app) {
   function init() {

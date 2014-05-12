@@ -1,11 +1,10 @@
-var express        = require('express')
-  , router         = express.Router()
-  , Handlebars     = require('handlebars')
-  , fs             = require('fs')
-  , _              = require('underscore')
-  , qfs            = require('q-io/fs')
-  , rss            = require('rss')
-
+var express        = require('express');
+var router         = express.Router();
+var Handlebars     = require('handlebars');
+var fs             = require('fs');
+var _              = require('underscore');
+var qfs            = require('q-io/fs');
+var rss            = require('rss');
 
 
 
