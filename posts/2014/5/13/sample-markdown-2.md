@@ -3,7 +3,7 @@
 
 SASS file provided so you can change basecolor for the template.
 
-Gag ipsum dolar sit amet basic math unsave bra female monday. Geek on games search rebecca black people mother bottom read joke. Cookie monster panda ipsum dolar so close trolololo dad german. Right phone luke i know that feel silent hill house crying cat. Russia brother male iron man genius fun donut impossibru gasp for avenger. Simpson derp poker face men 140% in cool 9000 in class note. True Story troll a loki nap viverra happy genius aww yeah.
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam nec rutrum erat. Nulla vestibulum nulla et lorem ultrices, id vehicula lorem accumsan. Maecenas lacinia orci nisl, nec laoreet nulla dictum eu. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Quisque aliquet consectetur suscipit. Morbi varius tortor sed ante vestibulum adipiscing. Suspendisse tincidunt consequat nisi, at malesuada lacus.
 
 **Check the markdown for this post in the posts directory.**
 
@@ -11,7 +11,7 @@ Gag ipsum dolar sit amet basic math unsave bra female monday. Geek on games sear
 
 The blog title is H1, the title of the post is H2, so it's better to make inner titles H3.
 
-> This is a blockquote. Laptop like a boss angry birds charlie sheen coffee elephant top superhero forever alone peter griffin t-rex. Drink lol unlock easter steve jobs weekend lois cereal oboma always. Thor y u no money nyan cat strangers diablo 3 scumbag students. Pizza keyboard puking rainbows not bad food le me clinton challenge accepted. Rainbow hac le friend gentlemen just captain avengers cuteness overload meme. Megusta too mainstream.
+> This is a blockquote. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam nec rutrum erat. Nulla vestibulum nulla et lorem ultrices, id vehicula lorem accumsan. Maecenas lacinia orci nisl, nec laoreet nulla dictum eu. Class aptent taciti sociosqu ad litora torquent per conubia nostra.
 
 ### Foot notes
 
@@ -44,13 +44,9 @@ This is an [example link with a title](http://example.com/ "With a Title").
 
 ![alt text](http://res.cloudinary.com/demo/image/upload/sample.jpg "Title")
 
-I strongly recommend against using any `<blink>` tags.
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam nec rutrum erat. Nulla vestibulum nulla et lorem ultrices, id vehicula lorem accumsan. Maecenas lacinia orci nisl, nec laoreet nulla dictum eu. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.
 
-I wish SmartyPants used named entities like `&mdash;`
-instead of decimal-encoded entites like `&#8212;`.
-
-If you want your page to validate under XHTML 1.0 Strict,
-you've got to put paragraph tags in your blockquotes:
+Text indentation for code:
 
     <blockquote>
         <p>For example.</p>

@@ -3,7 +3,8 @@ body {
   line-height: 30px;
   font-family: 'Proxima Nova', 'Helvetica Neue', Arial;
   font-weight: 200;
-  color: #444; }
+  color: #444;
+  -webkit-text-size-adjust: none; }
 
 h1, h2, h3, h4, h5, h6 {
   font-weight: 500; }
