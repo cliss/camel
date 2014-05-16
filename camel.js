@@ -1,6 +1,6 @@
-/***************************************************
- * INITIALIZATION                                  *
- ***************************************************/
+/*********__________________________________********
+ * INiTIaLIZaTIoN                                  _
+ ******/    //--_
 
 var express = require('express');
 var compress = require('compression');
@@ -36,9 +36,9 @@ var footerSource = null;
 var postHeaderTemplate = null;
 var siteMetadata = {};
 
-/***************************************************
- * HELPER METHODS                                  *
- ***************************************************/
+/*******************__**************************
+ * HELPER METHODS     _____*___________________    *
+ ******____________________**********/
 
 function init() {
     loadHeaderFooter('defaultTags.html', function (data) {
@@ -638,11 +638,11 @@ app.get('/:slug', function (request, response) {
     }
 });
 
-/***************************************************
- * STARTUP                                         *
- ***************************************************/
+/***________________________________**************
+ * STARTUP                                         _
+ **********/
 init();
 var port = Number(process.env.PORT || 5000);
 server.listen(port, function () {
-   console.log('Express server started on port %s', server.address().port); 
+   console.log('Express server started on port %s', server.address().port);
 });
