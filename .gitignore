@@ -9,3 +9,7 @@ pids
 
 # Dependencies
 node_modules
+
+*.codekit
+
+*.scssc
