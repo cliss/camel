@@ -515,7 +515,7 @@ app.get('/rss', function (request, response) {
                             // Offset the time because Heroku's servers are GMT, whereas these dates are EST/EDT.
                             date: new Date(article['metadata']['Date']).addHours(utcOffset),
                             url: externalFilenameForFile(article['file'], request),
-                            description: article['unwrappedBody'].replace(/[\s\S]*<script[\s\S]*<\/script>/gm, "")
+                            description: article['unwrappedBody'].replace(/<script[\s\S]*?<\/script>/gm, "")
                         });
                     }
                 });
