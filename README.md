@@ -2,6 +2,11 @@
 
 [n]: http://nodejs.org/
 
+[![Build Status][travis-badge]][travis-link]
+
+[travis-badge]: https://travis-ci.org/cliss/camel.svg?branch=master
+[travis-link]: https://travis-ci.org/cliss/camel
+
 # Design Goals
 
 More specifically, the design goals were:
