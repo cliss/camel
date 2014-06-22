@@ -58,7 +58,8 @@ function init() {
         Handlebars.registerHelper('formatIsoDate', function (date) {
             return new Handlebars.SafeString(date !== undefined ? new Date(date).iso() : '');
         });
-        postHeaderTemplate = Handlebars.compile(data); });
+        postHeaderTemplate = Handlebars.compile(data);
+    });
 
     // Kill the cache every 30 minutes.
     setInterval(emptyCache, cacheResetTimeInMillis);
@@ -352,13 +353,14 @@ function loadAndSendMarkdownFile(file, response) {
         return;
     } else {
         // Fetch the real deal.
-        console.log('Sending file: ' + file)
         fs.exists(file + '.md', function (exists) {
             if (!exists) {
+                console.log('404: ' + file);
                 response.send(404, {error: 'A post with that address is not found.'});
                 return;
             }
 
+            console.log('Sending file: ' + file)
             var html = generateHtmlForFile(file);
             response.send(200, html);
         });
@@ -410,6 +412,7 @@ function sendYearListing(request, response) {
 // bestRouteHandler() --> generator() to build HTML --> completion() to add to cache and send
 function baseRouteHandler(file, sender, generator) {
     if (fetchFromCache(file) == null) {
+        console.log('Not in cache: ' + file);
         generator(function (postData) {
             addRenderedPostToCache(file, {body: postData});
             sender({body: postData});
