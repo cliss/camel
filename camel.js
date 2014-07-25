@@ -175,7 +175,18 @@ function generateHtmlAndMetadataForFile(file) {
     if (retVal == undefined) {
         var lines = getLinesFromPost(file);
         var metadata = parseMetadata(lines['metadata']);
-        metadata['relativeLink'] = externalFilenameForFile(file);
+
+        if (metadata['Linked'] == 'Yes'){
+            metadata['relativeLink'] =  metadata['Link'];
+            metadata['permalink'] = externalFilenameForFile(file);
+            metadata['linked'] = 'linked';
+
+        } else {
+            metadata['relativeLink'] = externalFilenameForFile(file);
+            metadata['permalink'] = metadata['relativeLink'];
+            metadata['linked'] = 'notLinked';
+        }
+
         metadata['header'] = postHeaderTemplate(metadata);
         // If this is a post, assume a body class of 'post'.
         if (postRegex.test(file)) {
@@ -487,6 +498,10 @@ app.get('/', function (request, response) {
         });
     });
 });
+
+/***************************************************
+ * RSS / PLEASE EDIT WITH YOUR SITE'S DETAILS      *
+ ***************************************************/
 
 app.get('/rss', function (request, response) {
     response.type('application/rss+xml');
