@@ -134,7 +134,7 @@ Therefore, all the posts in a single day will __always__ be on the same page. Th
 that pages will have *at least* N posts, but possibly more. In fact, a single page could have
 quite a few more than N posts if, say, on one lucrative day there are 1.5*N or 2*N posts.
 
-Pagingation is only necessary on the homepage, and page numbers are 1-based. Pages greater than
+Pagination is only necessary on the homepage, and page numbers are 1-based. Pages greater than
 1 are loaded by passing the query string parameter p. For example, `hostname/?p=3` for page 3.
 
 # Status
