@@ -335,7 +335,7 @@ function loadAndSendMarkdownFile(file, response) {
             if (exists) {
                 fs.readFile(file, {encoding: 'UTF8'}, function (error, data) {
                     if (error) {
-                        response.send(500, {error: error});
+                        response.status(500).send({error: error});
                         return;
                     }
                     response.type('text/x-markdown; charset=UTF-8');
@@ -343,26 +343,26 @@ function loadAndSendMarkdownFile(file, response) {
                     return;
                 });
             } else {
-                response.send(400, {error: 'Markdown file not found.'});
+                response.status(400).send({error: 'Markdown file not found.'});
             }
         });
     } else if (fetchFromCache(file) != null) {
         // Send the cached version.
         console.log('Sending cached file: ' + file);
-        response.send(200, fetchFromCache(file)['body']);
+        response.status(200).send(fetchFromCache(file)['body']);
         return;
     } else {
         // Fetch the real deal.
         fs.exists(file + '.md', function (exists) {
             if (!exists) {
                 console.log('404: ' + file);
-                response.send(404, {error: 'A post with that address is not found.'});
+                response.status(404).send({error: 'A post with that address is not found.'});
                 return;
             }
 
             console.log('Sending file: ' + file)
             var html = generateHtmlForFile(file);
-            response.send(200, html);
+            response.status(200).send(html);
         });
     }
 }
@@ -582,7 +582,7 @@ app.get('/:year/:month/:day', function (request, response) {
     // Get all the files in the directory
     fs.readdir(path, function (error, files) {
         if (error) {
-            response.send(400, {error: "This path doesn't exist."});
+            response.status(400).send({error: "This path doesn't exist."});
             return;
         }
 
