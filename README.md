@@ -18,7 +18,7 @@ More specifically, the design goals were:
 
 Camel is neither a static blogging platform nor a truly dynamic one. It is a little
 from column A, and a little from column B. The first time a post is loaded, it is rendered
-by converting from Markdown to HTML, and then postpocessed by adding headers & footer, as well
+by converting from Markdown to HTML, and then postprocessed by adding headers & footer, as well
 as making metadata replacements. Upon a completed render, the resultant HTML is stored
 and used from that point forward.
 
