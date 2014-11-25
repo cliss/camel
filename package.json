@@ -1,7 +1,7 @@
 {
   "name": "Camel",
-  "version": "1.0.0",
-  "description": "Barebones blogging software",
+  "version": "1.0.1",
+  "description": "Featureliss blogging software",
   "keywords": [
       "blog",
       "blogging"
@@ -18,8 +18,33 @@
   },
   "contributors": [
       {
+          "name": "Max Bucknell",
+          "url": "http://maxbucknell.com/"
+      },
+      {
           "name": "Ben Elsen",
           "url": "http://benelsen.com/"
+      },
+      {
+          "name": "Benjamin Esham",
+          "url": "http://esham.io/"
+      },
+
+      {
+          "name": "Sergei Filippov",
+          "url": "http://haiku.co.nz/"
+      },
+      {
+          "name": "ksgant",
+          "url": "https://github.com/ksgant/"
+      },
+      {
+          "name": "Robbie Mckennie",
+          "url": "http://herebedragons.no-ip.org/"
+      },
+      {
+          "name": "Marco Vega",
+          "url": "http://www.extd.co/"
       }
   ],
   "bugs": "https://github.com/cliss/camel/issues",
@@ -29,7 +54,7 @@
   "author": "Casey Liss <casey@caseyliss.com>",
   "license": "MIT",
   "dependencies": {
-    "express": "^4.1.0",
+    "express": "^4.8.0",
     "rss": "^0.3.2",
     "q-io": "^1.11.0",
     "sugar": "^1.4.1",

@@ -12,10 +12,15 @@ var _ = require('underscore');
 var marked = require('marked');
 var rss = require('rss');
 var Handlebars = require('handlebars');
+var version = require('./package.json').version;
 
 var app = express();
 app.use(compress());
 app.use(express.static("public"));
+app.use(function (request, response, next) {
+    response.header('X-powered-by', 'Camel (https://github.com/cliss/camel)');
+    next();
+})
 var server = http.createServer(app);
 
 // "Statics"
@@ -339,7 +344,7 @@ function loadAndSendMarkdownFile(file, response) {
                         return;
                     }
                     response.type('text/x-markdown; charset=UTF-8');
-                    response.send(data);
+                    response.status(200).send(data);
                     return;
                 });
             } else {
@@ -400,7 +405,7 @@ function sendYearListing(request, response) {
         });
 
         var header = headerSource.replace(metadataMarker + 'Title' + metadataMarker, 'Posts for ' + year);
-        response.send(header + retVal + footerSource);
+        response.status(200).send(header + retVal + footerSource);
     });
 
 }
@@ -440,7 +445,7 @@ app.get('/', function (request, response) {
 
     // Do the standard route handler. Cough up a cached page if possible.
     baseRouteHandler('/?p=' + page, function (cachedData) {
-        response.send(cachedData['body']);
+        response.status(200).send(cachedData['body']);
     }, function (completion) {
         var indexInfo = generateHtmlAndMetadataForFile(postsRoot + 'index.md');
         Handlebars.registerHelper('formatDate', function (date) {
@@ -529,10 +534,10 @@ app.get('/rss', function (request, response) {
                 rss: feed.xml()
             };
 
-            response.send(renderedRss['rss']);
+            response.status(200).send(renderedRss['rss']);
         });
     } else {
-        response.send(renderedRss['rss']);
+        response.status(200).send(renderedRss['rss']);
     }
 });
 
@@ -571,7 +576,7 @@ app.get('/:year/:month', function (request, response) {
          });
 
          var header = headerSource.replace(metadataMarker + 'Title' + metadataMarker, "Day Listing");
-         response.send(header + html + footerSource);
+         response.status(200).send(header + html + footerSource);
     });
  });
 
@@ -607,7 +612,7 @@ app.get('/:year/:month/:day', function (request, response) {
         });
 
         var header = headerSource.replace(metadataMarker + 'Title' + metadataMarker, day.format('{Weekday}, {Month} {d}'));
-        response.send(header + html + footerSource);
+        response.status(200).send(header + html + footerSource);
     })
  });
 
@@ -643,5 +648,5 @@ app.get('/:slug', function (request, response) {
 init();
 var port = Number(process.env.PORT || 5000);
 server.listen(port, function () {
-   console.log('Express server started on port %s', server.address().port);
+   console.log('Camel v' + version + ' server started on port %s', server.address().port);
 });
