@@ -45,7 +45,7 @@ and used from that point forward.
 * It's worth noting there are some [Handlebars][hb] templates in use:
     * `index.md`
         * `@@ DayTemplate` - used to render a day
-        * `@@ ArticlePartial` – used to render a single article in a day
+        * `@@ ArticlePartial` – used to render a single article in a day
         * `@@ FooterTemplate` - used to render pagination
     * `postHeader.html` - Placed on every post between the site header and post content
 
@@ -102,6 +102,19 @@ For each post, metadata is specified at the top, and can be leveraged in the bod
 
 The title and date are required. Any other metadata is optional.
 
+For a linked post, the sample would look like this:
+
+    @@ Title=Test Link Post
+    @@ Date=2014-05 17:50
+    @@ Linked=Yes
+    @@ Link=http://casseyliss.com
+
+    > This is a quote entitled from a link.
+
+    My comments.
+
+You do not need to use this feature. Omitting '@@ Linked' and '@@ Link' will still result in a normal post.
+
 # Quirks
 
 There are a couple of quirks, which don't bother me, but may bother you.
@@ -119,6 +132,10 @@ directory. It is assumed that delivery will happen by way of a `git push` or equ
 That is, for example, how it would work when run on [Heroku][h].
 
 [h]: http://www.heroku.com/
+
+## RSS
+
+To edit the RSS to your site's details, find the giant RSS banner around line 505.
 
 ## Pagination
 
