@@ -102,6 +102,24 @@ For each post, metadata is specified at the top, and can be leveraged in the bod
 
 The title and date are required. Any other metadata is optional.
 
+### Redirects
+
+As of version 1.1, redirects are supported. To do so, a specially formed file is placed
+in the `posts/` tree. The file should have two lines; the first should be the status code
+of the redirect ([301][301] or [302][302]). The second line should be the target URL.
+
+Suppose you wanted to redirect `/2014/12/10/source` to `/2014/12/10/destination`. You will
+add the file `/posts/2014/12/10/source.redirect`; it will contain the following:
+
+    302
+    /2014/12/10/destination
+
+Redirects to both internal and external URLs are supported. Providing an invalid status
+code will result in that status code being used blindly, so tread carefully.
+
+[301]: http://en.wikipedia.org/wiki/HTTP_301
+[302]: http://en.wikipedia.org/wiki/HTTP_302
+
 # Quirks
 
 There are a couple of quirks, which don't bother me, but may bother you.
@@ -118,7 +136,11 @@ Additionally, there is no mechanism within Camel for transporting a post to the 
 directory. It is assumed that delivery will happen by way of a `git push` or equivalent.
 That is, for example, how it would work when run on [Heroku][h].
 
+*Note that as of 19 November 2014, Heroku now supports integration with Dropbox, which
+[makes it much easier to post to Camel while mobile][camelmobile].*
+
 [h]: http://www.heroku.com/
+[camelmobile]: http://www.caseyliss.com/2014/11/19/heroku-adds-dropbox-support
 
 ## Pagination
 

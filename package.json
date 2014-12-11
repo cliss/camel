@@ -1,67 +1,66 @@
 {
   "name": "Camel",
-  "version": "1.0.1",
+  "version": "1.1",
   "description": "Featureliss blogging software",
   "keywords": [
-      "blog",
-      "blogging"
+    "blog",
+    "blogging"
   ],
   "main": "camel.js",
   "homepage": "http://github.com/cliss/camel/",
   "repository": {
-      "type": "git",
-      "url": "https://github.com/cliss/camel.git"
+    "type": "git",
+    "url": "https://github.com/cliss/camel.git"
   },
   "author": {
       "name": "Casey Liss",
       "url": "http://www.caseyliss.com/"
   },
   "contributors": [
-      {
-          "name": "Max Bucknell",
-          "url": "http://maxbucknell.com/"
-      },
-      {
-          "name": "Ben Elsen",
-          "url": "http://benelsen.com/"
-      },
-      {
-          "name": "Benjamin Esham",
-          "url": "http://esham.io/"
-      },
+    {
+      "name": "Max Bucknell",
+      "url": "http://maxbucknell.com/"
+    },
+    {
+      "name": "Ben Elsen",
+      "url": "http://benelsen.com/"
+    },
+    {
+      "name": "Benjamin Esham",
+      "url": "http://esham.io/"
+    },
 
-      {
-          "name": "Sergei Filippov",
-          "url": "http://haiku.co.nz/"
-      },
-      {
-          "name": "ksgant",
-          "url": "https://github.com/ksgant/"
-      },
-      {
-          "name": "Robbie Mckennie",
-          "url": "http://herebedragons.no-ip.org/"
-      },
-      {
-          "name": "Marco Vega",
-          "url": "http://www.extd.co/"
-      }
+    {
+      "name": "Sergei Filippov",
+      "url": "http://haiku.co.nz/"
+    },
+    {
+      "name": "ksgant",
+      "url": "https://github.com/ksgant/"
+    },
+    {
+      "name": "Robbie Mckennie",
+      "url": "http://herebedragons.no-ip.org/"
+    },
+    {
+      "name": "Marco Vega",
+      "url": "http://www.extd.co/"
+    }
   ],
   "bugs": "https://github.com/cliss/camel/issues",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Casey Liss <casey@caseyliss.com>",
   "license": "MIT",
   "dependencies": {
-    "express": "^4.8.0",
-    "rss": "^0.3.2",
-    "q-io": "^1.11.0",
-    "sugar": "^1.4.1",
-    "underscore": "^1.6.0",
-    "marked": "^0.3.2",
+    "compression": "^1.2.1",
+    "express": "^4.10.4",
     "handlebars": "^2.0.0",
-    "compression": "^1.0.2"
+    "marked": "^0.3.2",
+    "q-io": "^1.11.6",
+    "rss": "^0.3.2",
+    "sugar": "^1.4.1",
+    "underscore": "^1.6.0"
   },
   "engines": {
     "node": "0.10.x"

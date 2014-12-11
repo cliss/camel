@@ -18,7 +18,7 @@ var app = express();
 app.use(compress());
 app.use(express.static("public"));
 app.use(function (request, response, next) {
-    response.header('X-powered-by', 'Camel (https://github.com/cliss/camel)');
+	response.header('X-powered-by', 'Camel (https://github.com/cliss/camel)');
     next();
 })
 var server = http.createServer(app);
@@ -29,7 +29,7 @@ var templateRoot = './templates/';
 var metadataMarker = '@@';
 var maxCacheSize = 50;
 var postsPerPage = 10;
-var postRegex = /^(.\/)?posts\/\d{4}\/\d{1,2}\/\d{1,2}\/(\w|-)*(.md)?$/;
+var postRegex = /^(.\/)?posts\/\d{4}\/\d{1,2}\/\d{1,2}\/(\w|-)*(.redirect|.md)?$/;
 var utcOffset = 5;
 var cacheResetTimeInMillis = 1800000;
 
@@ -270,7 +270,9 @@ function allPostsSortedAndGrouped(completion) {
                 var articles = [];
                 // ...get all the data for that file ...
                 _.each(articleFiles, function (file) {
-                    articles.push(generateHtmlAndMetadataForFile(file));
+                	if (!file.endsWith('redirect')) {
+                    	articles.push(generateHtmlAndMetadataForFile(file));
+                    }
                 });
 
                 // ...so we can sort the posts...
@@ -333,7 +335,7 @@ function emptyCache() {
  ***************************************************/
 
 function loadAndSendMarkdownFile(file, response) {
-    if (file.endsWith('.md')) {
+	if (file.endsWith('.md')) {
         // Send the source file as requested.
         console.log('Sending source file: ' + file);
         fs.exists(file, function (exists) {
@@ -357,18 +359,31 @@ function loadAndSendMarkdownFile(file, response) {
         response.status(200).send(fetchFromCache(file)['body']);
         return;
     } else {
-        // Fetch the real deal.
-        fs.exists(file + '.md', function (exists) {
-            if (!exists) {
-                console.log('404: ' + file);
-                response.status(404).send({error: 'A post with that address is not found.'});
-                return;
-            }
+    	var found = false;
+        // Is this a post?
+        if (fs.existsSync(file + '.md')) {
+			found = true;
+			console.log('Sending file: ' + file)
+			var html = generateHtmlForFile(file);
+			response.status(200).send(html);
+		// Or is this a redirect?
+        } else if (fs.existsSync(file + '.redirect')) {
+			var data = fs.readFileSync(file + '.redirect', {encoding: 'UTF8'});
+			if (data.length > 0) {
+				var parts = data.split('\n');
+				if (parts.length >= 2) {
+					found = true;
+					console.log('Redirecting to: ' + parts[1]);
+					response.redirect(parseInt(parts[0]), parts[1]);
+                }
+			}
+        }
 
-            console.log('Sending file: ' + file)
-            var html = generateHtmlForFile(file);
-            response.status(200).send(html);
-        });
+        if (!found) {
+	        console.log('404: ' + file);
+            response.status(404).send({error: 'A post with that address is not found.'});
+            return;
+        }
     }
 }
 
@@ -414,7 +429,7 @@ function sendYearListing(request, response) {
 // file: file to try.
 // sender: function to send result to the client. Only parameter is an object that has the key 'body', which is raw HTML
 // generator: function to generate the raw HTML. Only parameter is a function that takes a completion handler that takes the raw HTML as its parameter.
-// bestRouteHandler() --> generator() to build HTML --> completion() to add to cache and send
+// baseRouteHandler() --> generator() to build HTML --> completion() to add to cache and send
 function baseRouteHandler(file, sender, generator) {
     if (fetchFromCache(file) == null) {
         console.log('Not in cache: ' + file);
@@ -597,7 +612,9 @@ app.get('/:year/:month/:day', function (request, response) {
         // Get all the data for each file
         var postsToday = [];
         files.each(function (file) {
-            postsToday.push(generateHtmlAndMetadataForFile(path + '/' + file));
+        	if (postRegex.test(path + '/' + file) && file.endsWith('.md')) {
+	            postsToday.push(generateHtmlAndMetadataForFile(path + '/' + file));
+	        }
         });
 
         // Go ahead and sort...
