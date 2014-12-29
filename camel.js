@@ -368,21 +368,20 @@ function loadAndSendMarkdownFile(file, response) {
 			response.status(200).send(html);
 		// Or is this a redirect?
         } else if (fs.existsSync(file + '.redirect')) {
-			var data = fs.readFileSync(file + '.redirect', {encoding: 'UTF8'});
+			var data = fs.readFileSync(file + '.redirect', {encoding: 'UTF8'});		
 			if (data.length > 0) {
 				var parts = data.split('\n');
 				if (parts.length >= 2) {
 					found = true;
 					console.log('Redirecting to: ' + parts[1]);
 					response.redirect(parseInt(parts[0]), parts[1]);
-                }
+				}
 			}
         }
-
+        
         if (!found) {
-	        console.log('404: ' + file);
-            response.status(404).send({error: 'A post with that address is not found.'});
-            return;
+	        send404(response, file);
+        	return;
         }
     }
 }
@@ -390,7 +389,7 @@ function loadAndSendMarkdownFile(file, response) {
 // Sends a listing of an entire year's posts.
 function sendYearListing(request, response) {
     var year = request.params.slug;
-    var retVal = '<h1>Posts for ' + year + '</h1>';
+    var retVal = '<h1>Posts for the year ' + year + '</h1>';
     var currentMonth = null;
 
     allPostsSortedAndGrouped(function (postsByDay) {
@@ -441,6 +440,11 @@ function baseRouteHandler(file, sender, generator) {
         console.log('In cache: ' + file);
         sender(fetchFromCache(file));
     }
+}
+
+function send404(response, file) {
+	console.log('404: ' + file);
+    response.status(404).send(generateHtmlForFile('posts/404.md'));
 }
 
 /***************************************************
@@ -647,6 +651,20 @@ app.get('/:year/:month/:day/:slug', function (request, response) {
 //     response.send(205);
 // });
 
+app.get('/count', function (request, response) {
+	console.log("/count");
+	allPostsSortedAndGrouped(function (all) {
+		var count = 0;
+		var days = 0;
+		for (var day in _.keys(all)) {
+			days++;
+			count += all[day].articles.length;
+		}
+		
+		response.send(count + ' articles, across ' + days + ' days that have at least one post.');
+	});
+});
+
 // Support for non-blog posts, such as /about, as well as years, such as /2014.
 app.get('/:slug', function (request, response) {
     // If this is a typical slug, send the file
@@ -654,8 +672,11 @@ app.get('/:slug', function (request, response) {
         var file = postsRoot + request.params.slug;
         loadAndSendMarkdownFile(file, response);
     // If it's a year, handle that.
-    } else {
+    } else if (request.params.slug >= 2000) {
         sendYearListing(request, response);
+    // If it's garbage (ie, a year less than 2013), send a 404.
+    } else {
+    	send404(response, request.params.slug);
     }
 });
 
