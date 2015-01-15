@@ -9,7 +9,11 @@ var fs = require('fs');
 var qfs = require('q-io/fs');
 var sugar = require('sugar');
 var _ = require('underscore');
-var marked = require('marked');
+var markdownit = require('markdown-it')({
+	html: true,
+	xhtmlOut: true,
+	typographer: true
+}).use(require('markdown-it-footnote'));
 var rss = require('rss');
 var Handlebars = require('handlebars');
 var version = require('./package.json').version;
@@ -30,6 +34,8 @@ var metadataMarker = '@@';
 var maxCacheSize = 50;
 var postsPerPage = 10;
 var postRegex = /^(.\/)?posts\/\d{4}\/\d{1,2}\/\d{1,2}\/(\w|-)*(.redirect|.md)?$/;
+var footnoteAnchorRegex = /[#"]fn\d+/g;
+var footnoteIdRegex = /fnref\d+/g;
 var utcOffset = 5;
 var cacheResetTimeInMillis = 1800000;
 
@@ -69,13 +75,6 @@ function init() {
     // Kill the cache every 30 minutes.
     setInterval(emptyCache, cacheResetTimeInMillis);
 
-    marked.setOptions({
-        renderer: new marked.Renderer(),
-        gfm: true,
-        tables: true,
-        smartLists: true,
-        smartypants: true
-    });
 }
 
 function loadHeaderFooter(file, completion) {
@@ -154,7 +153,7 @@ function performMetadataReplacements(replacements, haystack) {
 // Parses the HTML and renders it.
 function parseHtml(lines, replacements, postHeader) {
     // Convert from markdown
-    var body = performMetadataReplacements(replacements, marked(lines));
+    var body = performMetadataReplacements(replacements, markdownit.render(lines));
     // Perform replacements
     var header = performMetadataReplacements(replacements, headerSource);
     // Concatenate HTML
@@ -210,7 +209,7 @@ function generateHtmlForFile(file) {
 // Gets the body HTML for this file, no header/footer.
 function generateBodyHtmlForFile(file) {
     var parts = getLinesFromPost(file);
-    var body = marked(parts['body']);
+    var body = markdownit.render(parts['body']);
     var metadata = parseMetadata(parts['metadata']);
     metadata['relativeLink'] = externalFilenameForFile(file);
     return body;
@@ -368,7 +367,7 @@ function loadAndSendMarkdownFile(file, response) {
 			response.status(200).send(html);
 		// Or is this a redirect?
         } else if (fs.existsSync(file + '.redirect')) {
-			var data = fs.readFileSync(file + '.redirect', {encoding: 'UTF8'});		
+			var data = fs.readFileSync(file + '.redirect', {encoding: 'UTF8'});
 			if (data.length > 0) {
 				var parts = data.split('\n');
 				if (parts.length >= 2) {
@@ -378,7 +377,7 @@ function loadAndSendMarkdownFile(file, response) {
 				}
 			}
         }
-        
+
         if (!found) {
 	        send404(response, file);
         	return;
@@ -467,12 +466,25 @@ app.get('/', function (request, response) {
         response.status(200).send(cachedData['body']);
     }, function (completion) {
         var indexInfo = generateHtmlAndMetadataForFile(postsRoot + 'index.md');
+        var footnoteIndex = 0;
+
         Handlebars.registerHelper('formatDate', function (date) {
             return new Handlebars.SafeString(new Date(date).format('{Weekday}<br />{d}<br />{Month}<br />{yyyy}'));
         });
         Handlebars.registerHelper('dateLink', function (date) {
             var parsedDate = new Date(date);
             return '/' + parsedDate.format("{yyyy}") + '/' + parsedDate.format("{M}") + '/' + parsedDate.format('{d}') + '/';
+        });
+        Handlebars.registerHelper('offsetFootnotes', function (html) {
+        	// Each day will call this helper once. We will offset the footnotes
+        	// to account for multiple days being on one page. This will avoid
+        	// conflicts with footnote numbers. If two days both have footnote,
+        	// they would both be "fn1". Which doesn't work; they need to be unique.
+        	var retVal = html.replace(footnoteAnchorRegex, '$&' + footnoteIndex);
+        	retVal = retVal.replace(footnoteIdRegex, '$&' + footnoteIndex);
+        	++footnoteIndex;
+
+        	return retVal;
         });
         Handlebars.registerPartial('article', indexInfo['metadata']['ArticlePartial']);
         var dayTemplate = Handlebars.compile(indexInfo['metadata']['DayTemplate']);
@@ -660,7 +672,7 @@ app.get('/count', function (request, response) {
 			days++;
 			count += all[day].articles.length;
 		}
-		
+
 		response.send(count + ' articles, across ' + days + ' days that have at least one post.');
 	});
 });
@@ -669,8 +681,8 @@ app.get('/count', function (request, response) {
 app.get('/:slug', function (request, response) {
     // If this is a typical slug, send the file
     if (isNaN(request.params.slug)) {
-        var file = postsRoot + request.params.slug;
-        loadAndSendMarkdownFile(file, response);
+		var file = postsRoot + request.params.slug;
+		loadAndSendMarkdownFile(file, response);
     // If it's a year, handle that.
     } else if (request.params.slug >= 2000) {
         sendYearListing(request, response);
