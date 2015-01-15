@@ -45,7 +45,7 @@ and used from that point forward.
 * It's worth noting there are some [Handlebars][hb] templates in use:
     * `index.md`
         * `@@ DayTemplate` - used to render a day
-        * `@@ ArticlePartial` – used to render a single article in a day
+        * `@@ ArticlePartial` – used to render a single article in a day
         * `@@ FooterTemplate` - used to render pagination
     * `postHeader.html` - Placed on every post between the site header and post content
 
@@ -173,3 +173,12 @@ Camel is MIT-Licensed.
 Should you happen to use Camel, I'd love to know. Please [contact me][co].
 
 [co]: http://www.caseyliss.com/contact
+
+# Change Log
+
+* __1.2.0__ Changes from [marked](https://github.com/chjj/marked) to
+  [markdown-it](https://github.com/markdown-it/markdown-it), adds support for footnotes.
+* __1.1.0__ Fix post regex issue, adds support for redirects, adds `/count` route,
+  prevents year responses for unreasonable years
+* __1.0.1__ Adds x-powered-by header, upgrades to packages
+* __1.0.0__ Initial release
