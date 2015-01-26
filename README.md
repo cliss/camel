@@ -38,16 +38,16 @@ and used from that point forward.
 * There's a group of "statics" near the top of the file
 * The parameters in the `/rss` route will need to be modified.
 * The headers/footer:
-    * `header.html` - site header; shown at the top of every page
-    * `footer.html` - site footer; shown at the bottom of every page
-    * `defaultTags.html` - default metadata; merged with page metadata (page wins)
-    * `postHeader.html` - post header; shown at the top of every post not marked with `@@ HideHeader=true`. See below.
+* `header.html` - site header; shown at the top of every page
+* `footer.html` - site footer; shown at the bottom of every page
+* `defaultTags.html` - default metadata; merged with page metadata (page wins)
+* `postHeader.html` - post header; shown at the top of every post not marked with `@@ HideHeader=true`. See below.
 * It's worth noting there are some [Handlebars][hb] templates in use:
-    * `index.md`
-        * `@@ DayTemplate` - used to render a day
-        * `@@ ArticlePartial` – used to render a single article in a day
-        * `@@ FooterTemplate` - used to render pagination
-    * `postHeader.html` - Placed on every post between the site header and post content
+* `index.md`
+* `@@ DayTemplate` - used to render a day
+* `@@ ArticlePartial` – used to render a single article in a day
+* `@@ FooterTemplate` - used to render pagination
+* `postHeader.html` - Placed on every post between the site header and post content
 
 [hb]: http://handlebarsjs.com/
 
@@ -55,50 +55,50 @@ and used from that point forward.
 
 To use Camel, the following files are required:
 
-    Root
-      +-- camel.js
-      |   Application entry point
-      +-- package.json
-      |   Node package file
-      +-- templates/
-      |     +-- defaultTags.html
-      |     |   Site-level default tags, such as the site title
-      |     +-- header.html
-      |     |   Site header (top of every page)
-      |     +-- footer.html
-      |     |   Site footer (bottom of every page)
-      |     `-- postHeader.html
-      |         Post header (top of every post, after the site header. Handlebars template.)
-      +-- public/
-      |     `-- Any static files, such as images/css/javascript/etc.
-      `-- posts/
-          All the pages & posts are here. Pages in the root, posts ordered by day. For example:
-            +-- index.md
-            |   Root file; note that DayTemplate, ArticlePartial, and FooterTemplate are
-            |   all Handlebars templates
-            +-- about.md
-            |   Sample about page
-            +-- 2014/
-            |   Year
-            |     +-- 4/
-            |     |   Month
-            |     |   +-- 29/
-            |     |   |   Day
-            |     |   |    `-- some-blog-post.md
-            |     |   `-- 30/
-            |     |        +-- some-other-post.md
-            |     |        `-- yet-another-post.md
-            |     `-- 5/
-            |         `-- 1/
-            |             `-- newest-blog-post.md
-            `-- etc.
+Root
++-- camel.js
+|   Application entry point
++-- package.json
+|   Node package file
++-- templates/
+|     +-- defaultTags.html
+|     |   Site-level default tags, such as the site title
+|     +-- header.html
+|     |   Site header (top of every page)
+|     +-- footer.html
+|     |   Site footer (bottom of every page)
+|     `-- postHeader.html
+|         Post header (top of every post, after the site header. Handlebars template.)
++-- public/
+|     `-- Any static files, such as images/css/javascript/etc.
+`-- posts/
+All the pages & posts are here. Pages in the root, posts ordered by day. For example:
++-- index.md
+|   Root file; note that DayTemplate, ArticlePartial, and FooterTemplate are
+|   all Handlebars templates
++-- about.md
+|   Sample about page
++-- 2014/
+|   Year
+|     +-- 4/
+|     |   Month
+|     |   +-- 29/
+|     |   |   Day
+|     |   |    `-- some-blog-post.md
+|     |   `-- 30/
+|     |        +-- some-other-post.md
+|     |        `-- yet-another-post.md
+|     `-- 5/
+|         `-- 1/
+|             `-- newest-blog-post.md
+`-- etc.
 
 For each post, metadata is specified at the top, and can be leveraged in the body. For example:
 
-    @@ Title=Test Post
-    @@ Date=2014-05 17:50
+@@ Title=Test Post
+@@ Date=2014-05 17:50
 
-    This is a *test post* entitled "@@Title@@".
+This is a *test post* entitled "@@Title@@".
 
 The title and date are required. Any other metadata is optional.
 
@@ -111,8 +111,8 @@ of the redirect ([301][301] or [302][302]). The second line should be the target
 Suppose you wanted to redirect `/2014/12/10/source` to `/2014/12/10/destination`. You will
 add the file `/posts/2014/12/10/source.redirect`; it will contain the following:
 
-    302
-    /2014/12/10/destination
+302
+/2014/12/10/destination
 
 Redirects to both internal and external URLs are supported. Providing an invalid status
 code will result in that status code being used blindly, so tread carefully.
@@ -176,9 +176,12 @@ Should you happen to use Camel, I'd love to know. Please [contact me][co].
 
 # Change Log
 
+* __1.2.1__ Significant cleanup/restructuring. Now less embarrassing! Removal of lots of
+similar-sounding functions and more liberal use of data that we've already collected in
+allPostsSortedAndGrouped().
 * __1.2.0__ Changes from [marked](https://github.com/chjj/marked) to
-  [markdown-it](https://github.com/markdown-it/markdown-it), adds support for footnotes.
+[markdown-it](https://github.com/markdown-it/markdown-it), adds support for footnotes.
 * __1.1.0__ Fix post regex issue, adds support for redirects, adds `/count` route,
-  prevents year responses for unreasonable years
+prevents year responses for unreasonable years
 * __1.0.1__ Adds x-powered-by header, upgrades to packages
 * __1.0.0__ Initial release
