@@ -72,26 +72,26 @@ To use Camel, the following files are required:
     +-- public/
     |     `-- Any static files, such as images/css/javascript/etc.
     `-- posts/
-    All the pages & posts are here. Pages in the root, posts ordered by day. For example:
-    +-- index.md
-    |   Root file; note that DayTemplate, ArticlePartial, and FooterTemplate are
-    |   all Handlebars templates
-    +-- about.md
-    |   Sample about page
-    +-- 2014/
-    |   Year
-    |     +-- 4/
-    |     |   Month
-    |     |   +-- 29/
-    |     |   |   Day
-    |     |   |    `-- some-blog-post.md
-    |     |   `-- 30/
-    |     |        +-- some-other-post.md
-    |     |        `-- yet-another-post.md
-    |     `-- 5/
-    |         `-- 1/
-    |             `-- newest-blog-post.md
-    `-- etc.
+        All the pages & posts are here. Pages in the root, posts ordered by day. For example:
+        +-- index.md
+        |   Root file; note that DayTemplate, ArticlePartial, and FooterTemplate are
+        |   all Handlebars templates
+        +-- about.md
+        |   Sample about page
+        +-- 2014/
+        |   Year
+        |     +-- 4/
+        |     |   Month
+        |     |   +-- 29/
+        |     |   |   Day
+        |     |   |    `-- some-blog-post.md
+        |     |   `-- 30/
+        |     |        +-- some-other-post.md
+        |     |        `-- yet-another-post.md
+        |     `-- 5/
+        |         `-- 1/
+        |             `-- newest-blog-post.md
+        `-- etc.
 
 For each post, metadata is specified at the top, and can be leveraged in the body. For example:
 
