@@ -567,7 +567,6 @@ app.get('/:year/:month', function (request, response) {
 
 	allPostsSortedAndGrouped(function (postsByDay) {
 		var seekingDay = new Date(request.params.year, request.params.month - 1);
-		console.log('Seeking: ' + seekingDay);
 
 		var html = '<div class="center"><h1>' + seekingDay.format('{Month} {yyyy}') + "</h1></div>";
 		var anyFound = false;
@@ -593,13 +592,12 @@ app.get('/:year/:month', function (request, response) {
 			response.status(200).send(header + html + footerSource);
 	});
 });
-	
+
 // Day view
 app.get('/:year/:month/:day', function (request, response) {
 
 allPostsSortedAndGrouped(function (postsByDay) {
 	var seekingDay = new Date(request.params.year, request.params.month - 1, request.params.day);
-	console.log('Seeking: ' + seekingDay);
 
 	postsByDay.each(function (day) {
 		var thisDay = new Date(day['date']);
