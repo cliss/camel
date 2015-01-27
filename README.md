@@ -38,16 +38,16 @@ and used from that point forward.
 * There's a group of "statics" near the top of the file
 * The parameters in the `/rss` route will need to be modified.
 * The headers/footer:
-* `header.html` - site header; shown at the top of every page
-* `footer.html` - site footer; shown at the bottom of every page
-* `defaultTags.html` - default metadata; merged with page metadata (page wins)
-* `postHeader.html` - post header; shown at the top of every post not marked with `@@ HideHeader=true`. See below.
+    * `header.html` - site header; shown at the top of every page
+    * `footer.html` - site footer; shown at the bottom of every page
+    * `defaultTags.html` - default metadata; merged with page metadata (page wins)
+    * `postHeader.html` - post header; shown at the top of every post not marked with `@@ HideHeader=true`. See below.
 * It's worth noting there are some [Handlebars][hb] templates in use:
-* `index.md`
-* `@@ DayTemplate` - used to render a day
-* `@@ ArticlePartial` – used to render a single article in a day
-* `@@ FooterTemplate` - used to render pagination
-* `postHeader.html` - Placed on every post between the site header and post content
+    * `index.md`
+    * `@@ DayTemplate` - used to render a day
+    * `@@ ArticlePartial` – used to render a single article in a day
+    * `@@ FooterTemplate` - used to render pagination
+    * `postHeader.html` - Placed on every post between the site header and post content
 
 [hb]: http://handlebarsjs.com/
 
@@ -161,10 +161,12 @@ Pagination is only necessary on the homepage, and page numbers are 1-based. Page
 
 # Status
 
-Camel is functional, and is presently running [www.caseyliss.com][c]. It could probably stand
-to be cleaned up a little bit, but it is considered feature complete.
+Camel is functional, and is presently running [www.caseyliss.com][c]. There are lots of
+features that probably *could* be added, but none that I'm actively planning.
 
 [c]: http://www.caseyliss.com/
+
+Please update this file & issue a pull request if you'd like your site featured here.
 
 # License
 
@@ -178,7 +180,7 @@ Should you happen to use Camel, I'd love to know. Please [contact me][co].
 
 * __1.2.1__ Significant cleanup/restructuring. Now less embarrassing! Removal of lots of
 similar-sounding functions and more liberal use of data that we've already collected in
-allPostsSortedAndGrouped().
+`allPostsSortedAndGrouped()`.
 * __1.2.0__ Changes from [marked](https://github.com/chjj/marked) to
 [markdown-it](https://github.com/markdown-it/markdown-it), adds support for footnotes.
 * __1.1.0__ Fix post regex issue, adds support for redirects, adds `/count` route,
