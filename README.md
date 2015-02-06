@@ -191,7 +191,7 @@ Should you happen to use Camel, I'd love to know. Please [contact me][co].
 
 # Change Log
 
-* __1.3__ Added link posts.
+* __1.3.0__ Added link posts.
 * __1.2.1__ Significant cleanup/restructuring. Now less embarrassing! Removal of lots of
 similar-sounding functions and more liberal use of data that we've already collected in
 `allPostsSortedAndGrouped()`.
