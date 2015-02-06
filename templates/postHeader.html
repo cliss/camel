@@ -1,1 +1,6 @@
-<a class="postTitle" href="{{relativeLink}}">{{Title}}</a>
+{{#if Link}}
+    <a class="postTitle" href="{{Link}}">{{Title}}</a><br />
+    <a href="{{relativeLink}}">Permalink</a>
+{{else}}
+    <a class="postTitle" href="{{relativeLink}}">{{Title}}</a>
+{{/if}}

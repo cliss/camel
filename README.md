@@ -102,6 +102,19 @@ For each post, metadata is specified at the top, and can be leveraged in the bod
 
 The title and date are required. Any other metadata is optional.
 
+### Link Posts
+As of version 1.3, link posts are supported. To create a link post, simply add a `Link`
+metadata item:
+
+    @@ Title=Sample Link Post
+    @@ Date=2015-02-06 12:00
+    @@ Link=http://www.vt.edu/
+
+    This is a sample *link* post.
+
+The presence of a `Link` metadata item indicates this is a link post. The formatting for
+link and non-link post headers is controlled by the `postHeader.html` template.
+
 ### Redirects
 
 As of version 1.1, redirects are supported. To do so, a specially formed file is placed
@@ -178,6 +191,7 @@ Should you happen to use Camel, I'd love to know. Please [contact me][co].
 
 # Change Log
 
+* __1.3__ Added link posts.
 * __1.2.1__ Significant cleanup/restructuring. Now less embarrassing! Removal of lots of
 similar-sounding functions and more liberal use of data that we've already collected in
 `allPostsSortedAndGrouped()`.

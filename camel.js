@@ -178,7 +178,7 @@ function generateHtmlAndMetadataForFile(file) {
 		addRenderedPostToCache(file, {
 			metadata: metadata,
 			header: performMetadataReplacements(metadata, headerSource),
-			postHeader:  postHeaderTemplate(metadata),
+			postHeader:  performMetadataReplacements(metadata, postHeaderTemplate(metadata)),
 			unwrappedBody: performMetadataReplacements(metadata, markdownit.render(lines['body'])),
 			html: function () {
 				return this.header +
