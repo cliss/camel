@@ -10,7 +10,7 @@ More specifically, the design goals were:
 * Basic metadata, stored in each file
 * Basic templating, with a site header/footer and post header stored separately from content
 * Extremely quick performance, by caching rendered HTML output
-* Support RSS
+* Support for a RSS feed
 
 [m]: http://daringfireball.net/projects/markdown
 
@@ -37,19 +37,20 @@ and used from that point forward.
 
 * There's a group of "statics" near the top of the file
 * The parameters in the `/rss` route will need to be modified.
-* The headers/footer:
+* The headers/footers:
     * `header.html` - site header; shown at the top of every page
     * `footer.html` - site footer; shown at the bottom of every page
     * `defaultTags.html` - default metadata; merged with page metadata (page wins)
     * `postHeader.html` - post header; shown at the top of every post not marked with `@@ HideHeader=true`. See below.
-    * `rssFooter.html` - RSS footer; designed to only show anything on the bottom of
+    * `rssFooter.html` - RSS footer; intended to only show anything on the bottom of
        link posts in RSS, but is appended to all RSS entries.
 * It's worth noting there are some [Handlebars][hb] templates in use:
     * `index.md`
     * `@@ DayTemplate` - used to render a day
     * `@@ ArticlePartial` – used to render a single article in a day
     * `@@ FooterTemplate` - used to render pagination
-    * `postHeader.html` - Placed on every post between the site header and post content
+    * `postHeader.html` - placed on every post between the site header and post content
+    * `rssHeader.html` - placed on the bottom of every RSS item
 
 [hb]: http://handlebarsjs.com/
 
@@ -69,8 +70,10 @@ To use Camel, the following files are required:
     |     |   Site header (top of every page)
     |     +-- footer.html
     |     |   Site footer (bottom of every page)
-    |     `-- postHeader.html
-    |         Post header (top of every post, after the site header. Handlebars template.)
+    |     +-- postHeader.html
+    |     |   Post header (top of every post, after the site header. Handlebars template.)
+    |     `-- rssFooter.html
+    |         RSS footer (at the end of every RSS item)
     +-- public/
     |     `-- Any static files, such as images/css/javascript/etc.
     `-- posts/
@@ -116,6 +119,12 @@ metadata item:
 
 The presence of a `Link` metadata item indicates this is a link post. The formatting for
 link and non-link post headers is controlled by the `postHeader.html` template.
+
+In the RSS feed, the link for a link post is the *external* link. Thus, `rssFooter.html`
+is used to add a permalink to the Camel site at the bottom of each link post. It is
+important to note that this footer is shown on *every* post; it is up to the footer to
+decide whether or not to show anything for the post in question. The example included in
+this repo behaves as intended.
 
 ### Redirects
 
@@ -186,6 +195,9 @@ Please update this file & issue a pull request if you'd like your site featured 
 # License
 
 Camel is MIT-Licensed.
+
+I'd appreciate it you provided a link back to either this repository, or [my website][c],
+on any sites that run Camel.
 
 Should you happen to use Camel, I'd love to know. Please [contact me][co].
 

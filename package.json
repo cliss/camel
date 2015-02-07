@@ -4,7 +4,8 @@
   "description": "FeatureLiss blogging software",
   "keywords": [
     "blog",
-    "blogging"
+    "blogging",
+    "camel"
   ],
   "main": "camel.js",
   "homepage": "http://github.com/cliss/camel/",
