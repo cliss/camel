@@ -42,6 +42,8 @@ and used from that point forward.
     * `footer.html` - site footer; shown at the bottom of every page
     * `defaultTags.html` - default metadata; merged with page metadata (page wins)
     * `postHeader.html` - post header; shown at the top of every post not marked with `@@ HideHeader=true`. See below.
+    * `rssFooter.html` - RSS footer; designed to only show anything on the bottom of
+       link posts in RSS, but is appended to all RSS entries.
 * It's worth noting there are some [Handlebars][hb] templates in use:
     * `index.md`
     * `@@ DayTemplate` - used to render a day
@@ -191,6 +193,8 @@ Should you happen to use Camel, I'd love to know. Please [contact me][co].
 
 # Change Log
 
+* __1.3.1__ Updated RSS feed such that link posts open the external link, and have a
+  "Permalink" to the site is shown at the bottom of the post.
 * __1.3.0__ Added link posts.
 * __1.2.1__ Significant cleanup/restructuring. Now less embarrassing! Removal of lots of
 similar-sounding functions and more liberal use of data that we've already collected in

@@ -45,6 +45,7 @@ var allPostsSortedGrouped = {};
 var headerSource = undefined;
 var footerSource = null;
 var postHeaderTemplate = null;
+var rssFooterTemplate = null;
 var siteMetadata = {};
 
 /***************************************************
@@ -62,6 +63,9 @@ function init() {
 		});
 	});
 	loadHeaderFooter('footer.html', function (data) { footerSource = data; });
+	loadHeaderFooter('rssFooter.html', function (data) {
+		rssFooterTemplate = Handlebars.compile(data);
+	});
 	loadHeaderFooter('postHeader.html', function (data) {
 		Handlebars.registerHelper('formatPostDate', function (date) {
             return new Handlebars.SafeString(new Date(date).format('{Weekday} {d} {Month} {yyyy}, {h}:{mm} {TT}'));
@@ -179,6 +183,7 @@ function generateHtmlAndMetadataForFile(file) {
 			metadata: metadata,
 			header: performMetadataReplacements(metadata, headerSource),
 			postHeader:  performMetadataReplacements(metadata, postHeaderTemplate(metadata)),
+			rssFooter: performMetadataReplacements(metadata, rssFooterTemplate(metadata)),
 			unwrappedBody: performMetadataReplacements(metadata, markdownit.render(lines['body'])),
 			html: function () {
 				return this.header +
@@ -532,6 +537,17 @@ app.get('/rss', function (request, response) {
 			ttl: '60'
 		});
 
+		// Gets the URL for this post; returns the link target if a link post,
+		// the post's URL if not a link post.
+		var getPostUrl = function(article) {
+			if (typeof(article['metadata']['Link']) !== 'undefined') {
+				return article['metadata']['Link'];
+			}
+
+			return externalFilenameForFile(article['file'], request);
+		};
+
+
 		var max = 10;
 		var i = 0;
 		allPostsSortedAndGrouped(function (postsByDay) {
@@ -543,8 +559,9 @@ app.get('/rss', function (request, response) {
 							title: article['metadata']['Title'],
 							// Offset the time because Heroku's servers are GMT, whereas these dates are EST/EDT.
 							date: new Date(article['metadata']['Date']).addHours(utcOffset),
-							url: externalFilenameForFile(article['file'], request),
-							description: article['unwrappedBody'].replace(/<script[\s\S]*?<\/script>/gm, "")
+							url: getPostUrl(article),
+							guid: externalFilenameForFile(article['file'], request),
+							description: article['unwrappedBody'].replace(/<script[\s\S]*?<\/script>/gm, "").concat(article['rssFooter'])
 						});
 					}
 				});
