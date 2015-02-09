@@ -17,6 +17,13 @@ var markdownit = require('markdown-it')({
 var rss = require('rss');
 var Handlebars = require('handlebars');
 var version = require('./package.json').version;
+var twitter = require('twitter');
+var twitterClient = new twitter({
+	consumer_key: process.env.TWITTER_CONSUMER_KEY,
+	consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
+	access_token_key: process.env.TWITTER_ACCESS_TOKEN,
+	access_token_secret: process.env.TWITTER_TOKEN_SECRET
+});
 
 var app = express();
 app.use(compress());
@@ -38,6 +45,8 @@ var footnoteAnchorRegex = /[#"]fn\d+/g;
 var footnoteIdRegex = /fnref\d+/g;
 var utcOffset = 5;
 var cacheResetTimeInMillis = 1800000;
+var twitterUsername = 'yourusername';
+var twitterClientNeedle = 'your_app_needle';
 
 var renderedPosts = {};
 var renderedRss = {};
@@ -79,6 +88,51 @@ function init() {
 	// Kill the cache every 30 minutes.
 	setInterval(emptyCache, cacheResetTimeInMillis);
 
+	tweetLatestPost();
+}
+
+function tweetLatestPost() {
+	if (twitterClient != null && process.env.TWITTER_CONSUMER_KEY != null) {
+		twitterClient.get('statuses/user_timeline', {screen_name: twitterUsername}, function(error, tweets, response){
+			if (error) {
+				console.log(JSON.stringify(error, undefined, 2));
+				return;
+			}
+
+			var lastUrl = null;
+			var i = 0;
+			while (lastUrl == null && i < tweets.length) {
+				if (tweets[i].source.has(twitterClientNeedle) &&
+					tweets[i]['entities'] &&
+					tweets[i]['entities']['urls']) {
+					lastUrl = tweets[i].entities.urls[0].expanded_url;
+				} else {
+					i++;
+				}
+			}
+
+			allPostsSortedAndGrouped(function (postsByDay) {
+				var latestPost = postsByDay[0].articles[0];
+				var link = latestPost.metadata.SiteRoot + latestPost.metadata.relativeLink;
+
+				if (lastUrl != link) {
+					console.log('Tweeting new link: ' + link);
+
+					var params = {
+						status: latestPost.metadata.Title + '\n\n' + link
+					};
+					twitterClient.post('statuses/update', params, function (error, tweet, response) {
+							if (error) {
+								console.log(JSON.stringify(error, undefined, 2));
+								throw error;
+							}
+					});
+				} else {
+					console.log('Twitter is up to date.');
+				}
+			});
+		});
+	}
 }
 
 function loadHeaderFooter(file, completion) {
@@ -187,9 +241,9 @@ function generateHtmlAndMetadataForFile(file) {
 			unwrappedBody: performMetadataReplacements(metadata, markdownit.render(lines['body'])),
 			html: function () {
 				return this.header +
-				this.postHeader +
-				this.unwrappedBody +
-				footerSource;
+					this.postHeader +
+					this.unwrappedBody +
+					footerSource;
 			}
 		});
 	}
@@ -315,6 +369,8 @@ function emptyCache() {
 	renderedPosts = {};
 	renderedRss = {};
 	allPostsSortedGrouped = {};
+
+	tweetLatestPost();
 }
 
 /***************************************************
@@ -353,7 +409,7 @@ function loadAndSendMarkdownFile(file, response) {
 			console.log('Sending file: ' + file)
 			var html = generateHtmlForFile(file);
 			response.status(200).send(html);
-			// Or is this a redirect?
+		// Or is this a redirect?
 		} else if (fs.existsSync(file + '.redirect')) {
 			var data = fs.readFileSync(file + '.redirect', {encoding: 'UTF8'});
 			if (data.length > 0) {
@@ -547,7 +603,6 @@ app.get('/rss', function (request, response) {
 			return externalFilenameForFile(article['file'], request);
 		};
 
-
 		var max = 10;
 		var i = 0;
 		allPostsSortedAndGrouped(function (postsByDay) {
@@ -606,28 +661,28 @@ app.get('/:year/:month', function (request, response) {
 		var header = headerSource.replace(
 			metadataMarker + 'Title' + metadataMarker,
 			seekingDay.format('{Month} {yyyy}') + '&mdash;' + siteMetadata.SiteTitle);
-			response.status(200).send(header + html + footerSource);
+		response.status(200).send(header + html + footerSource);
 	});
 });
 
 // Day view
 app.get('/:year/:month/:day', function (request, response) {
 
-allPostsSortedAndGrouped(function (postsByDay) {
-	var seekingDay = new Date(request.params.year, request.params.month - 1, request.params.day);
+	allPostsSortedAndGrouped(function (postsByDay) {
+		var seekingDay = new Date(request.params.year, request.params.month - 1, request.params.day);
 
-	postsByDay.each(function (day) {
-		var thisDay = new Date(day['date']);
-		if (thisDay.is(seekingDay)) {
+		postsByDay.each(function (day) {
+			var thisDay = new Date(day['date']);
+			if (thisDay.is(seekingDay)) {
 
-			var html = "<h1>Posts from " + seekingDay.format('{Weekday}, {Month} {d}, {yyyy}') + "</h1><ul>";
-			day.articles.each(function (article) {
-				html += '<li><a href="' + article.metadata.relativeLink + '">' + article.metadata.Title + '</a></li>';
-			});
+				var html = "<h1>Posts from " + seekingDay.format('{Weekday}, {Month} {d}, {yyyy}') + "</h1><ul>";
+				day.articles.each(function (article) {
+					html += '<li><a href="' + article.metadata.relativeLink + '">' + article.metadata.Title + '</a></li>';
+				});
 
-			var header = headerSource.replace(
-				metadataMarker + 'Title' + metadataMarker,
-				seekingDay.format('{Weekday}, {Month} {d}, {Year}'));
+				var header = headerSource.replace(
+					metadataMarker + 'Title' + metadataMarker,
+					seekingDay.format('{Weekday}, {Month} {d}, {Year}'));
 				response.status(200).send(header + html + footerSource);
 			}
 		});
@@ -668,10 +723,10 @@ app.get('/:slug', function (request, response) {
 	if (isNaN(request.params.slug)) {
 		var file = postsRoot + request.params.slug;
 		loadAndSendMarkdownFile(file, response);
-		// If it's a year, handle that.
+	// If it's a year, handle that.
 	} else if (request.params.slug >= 2000) {
 		sendYearListing(request, response);
-		// If it's garbage (ie, a year less than 2013), send a 404.
+	// If it's garbage (ie, a year less than 2013), send a 404.
 	} else {
 		send404(response, request.params.slug);
 	}
@@ -683,5 +738,5 @@ app.get('/:slug', function (request, response) {
 init();
 var port = Number(process.env.PORT || 5000);
 server.listen(port, function () {
-	console.log('Camel v' + version + ' server started on port %s', server.address().port);
+console.log('Camel v' + version + ' server started on port %s', server.address().port);
 });

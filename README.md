@@ -36,7 +36,7 @@ and used from that point forward.
 ## Configuration
 
 * There's a group of "statics" near the top of the file
-* The parameters in the `/rss` route will need to be modified.
+* The parameters in the `/rss` route will need to be modified
 * The headers/footers:
     * `header.html` - site header; shown at the top of every page
     * `footer.html` - site footer; shown at the bottom of every page
@@ -51,6 +51,7 @@ and used from that point forward.
     * `@@ FooterTemplate` - used to render pagination
     * `postHeader.html` - placed on every post between the site header and post content
     * `rssHeader.html` - placed on the bottom of every RSS item
+* If you'd like to have Camel post to Twitter, you need to set four environment variables (see below)
 
 [hb]: http://handlebarsjs.com/
 
@@ -144,6 +145,29 @@ code will result in that status code being used blindly, so tread carefully.
 [301]: http://en.wikipedia.org/wiki/HTTP_301
 [302]: http://en.wikipedia.org/wiki/HTTP_302
 
+### Automatic tweets
+
+As of version 1.4, Camel can automatically tweet when a new post is discovered. This
+requires a custom app to be set up for your blog; you can set this up [at Twitter][tdev].
+To enable, specify four environment variables to correspond to those Twitter issues:
+
+    * `TWITTER_CONSUMER_KEY`
+    * `TWITTER_CONSUMER_SECRET`
+    * `TWITTER_ACCESS_TOKEN`
+    * `TWITTER_TOKEN_SECRET`
+
+Additionally, a couple of variables up at the top of the file need to be set:
+
+    * `twitterUsername` - the username of the Twitter account that will be tweeted from.
+    * `twitterClientNeedle` - a portion of the client's name
+
+Upon startup, and when the caches are cleaned, Camel will look at the most recent tweets
+by the account in question by the app with a name that contains `twitterClientNeedle`. It
+will look to see the most recent URL tweeted. If the URL does not match the most recent
+post's URL, then a tweet is fired off.
+
+[tdev]: https://apps.twitter.com
+
 # Quirks
 
 There are a couple of quirks, which don't bother me, but may bother you.
@@ -205,6 +229,7 @@ Should you happen to use Camel, I'd love to know. Please [contact me][co].
 
 # Change Log
 
+* __1.4.0__ Added support for auto-tweeting.
 * __1.3.1__ Updated RSS feed such that link posts open the external link, and have a
   "Permalink" to the site is shown at the bottom of the post.
 * __1.3.0__ Added link posts.
