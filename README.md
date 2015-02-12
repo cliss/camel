@@ -229,6 +229,8 @@ Should you happen to use Camel, I'd love to know. Please [contact me][co].
 
 # Change Log
 
+* __1.4.1__ Refactored to satisfy [JSLint](http://jslint.it). Fixed issue where a day that
+  only had a redirect in it caused duplicate day breaks to show on the homepage.
 * __1.4.0__ Added support for auto-tweeting.
 * __1.3.1__ Updated RSS feed such that link posts open the external link, and have a
   "Permalink" to the site is shown at the bottom of the post.
