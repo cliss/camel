@@ -10,7 +10,10 @@ More specifically, the design goals were:
 * Basic metadata, stored in each file
 * Basic templating, with a site header/footer and post header stored separately from content
 * Extremely quick performance, by caching rendered HTML output
-* Support for a RSS feed
+* Support for two RSS feeds:
+    * The default one, where link posts open on the target website
+    * The alternate feed, where link posts open on this website
+* Optional automatic posts to Twitter
 
 [m]: http://daringfireball.net/projects/markdown
 
@@ -36,7 +39,7 @@ and used from that point forward.
 ## Configuration
 
 * There's a group of "statics" near the top of the file
-* The parameters in the `/rss` route will need to be modified
+* The RSS parameters in the `generateRss` function will need to be modified.
 * The headers/footers:
     * `header.html` - site header; shown at the top of every page
     * `footer.html` - site footer; shown at the bottom of every page
@@ -51,7 +54,7 @@ and used from that point forward.
     * `@@ FooterTemplate` - used to render pagination
     * `postHeader.html` - placed on every post between the site header and post content
     * `rssHeader.html` - placed on the bottom of every RSS item
-* If you'd like to have Camel post to Twitter, you need to set four environment variables (see below)
+* If you'd like to have Camel post to Twitter, set four environment variables (see below)
 
 [hb]: http://handlebarsjs.com/
 
@@ -151,15 +154,15 @@ As of version 1.4, Camel can automatically tweet when a new post is discovered. 
 requires a custom app to be set up for your blog; you can set this up [at Twitter][tdev].
 To enable, specify four environment variables to correspond to those Twitter issues:
 
-* `TWITTER_CONSUMER_KEY`
-* `TWITTER_CONSUMER_SECRET`
-* `TWITTER_ACCESS_TOKEN`
-* `TWITTER_TOKEN_SECRET`
+    * `TWITTER_CONSUMER_KEY`
+    * `TWITTER_CONSUMER_SECRET`
+    * `TWITTER_ACCESS_TOKEN`
+    * `TWITTER_TOKEN_SECRET`
 
 Additionally, a couple of variables up at the top of the file need to be set:
 
-* `twitterUsername` - the username of the Twitter account that will be tweeted from.
-* `twitterClientNeedle` - a portion of the client's name
+    * `twitterUsername` - the username of the Twitter account that will be tweeted from.
+    * `twitterClientNeedle` - a portion of the client's name
 
 Upon startup, and when the caches are cleaned, Camel will look at the most recent tweets
 by the account in question by the app with a name that contains `twitterClientNeedle`. It
@@ -229,6 +232,8 @@ Should you happen to use Camel, I'd love to know. Please [contact me][co].
 
 # Change Log
 
+* __1.4.2__ Now provides for `/rss-alternate`, which points link posts to internal links
+  instead of external ones.
 * __1.4.1__ Refactored to satisfy [JSLint](http://jslint.it). Fixed issue where a day that
   only had a redirect in it caused duplicate day breaks to show on the homepage.
 * __1.4.0__ Added support for auto-tweeting.
