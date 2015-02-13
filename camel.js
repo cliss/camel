@@ -120,7 +120,6 @@ function parseMetadata(lines) {
 	// Merge with site default metadata
 	Object.merge(retVal, siteMetadata, false, function(key, targetVal, sourceVal) {
 		// Ensure that the file wins over the defaults.
-		console.log('overwriting "' + sourceVal + '" with "' + targetVal);
 		return targetVal;
 	});
 
@@ -317,7 +316,7 @@ function init() {
 
 		// This relies on the above, so nest it.
 		loadHeaderFooter('header.html', function (data) {
-			headerSource = performMetadataReplacements(siteMetadata, data);
+			headerSource = data;
 		});
 	});
 	loadHeaderFooter('footer.html', function (data) { footerSource = data; });
@@ -474,7 +473,8 @@ function sendYearListing(request, response) {
 			retVal += "<i>No posts found.</i>";
 		}
 
-		var header = headerSource.replace(metadataMarker + 'Title' + metadataMarker, 'Posts for ' + year);
+		var updatedSource = performMetadataReplacements(siteMetadata, headerSource);
+		var header = updatedSource.replace(metadataMarker + 'Title' + metadataMarker, 'Posts for ' + year);
 		response.status(200).send(header + retVal + footerSource);
 	});
 
@@ -689,7 +689,7 @@ app.get('/:year/:month', function (request, response) {
 		if (!anyFound) {
 			html += "<i>No posts found.</i>";
 		}
-		var header = headerSource.replace(
+		var header = performMetadataReplacements(siteMetadata, headerSource).replace(
 			metadataMarker + 'Title' + metadataMarker,
 			seekingDay.format('{Month} {yyyy}') + '&mdash;' + siteMetadata.SiteTitle);
 		response.status(200).send(header + html + footerSource);
@@ -710,7 +710,7 @@ app.get('/:year/:month/:day', function (request, response) {
 					html += '<li><a href="' + article.metadata.relativeLink + '">' + article.metadata.Title + '</a></li>';
 				});
 
-				var header = headerSource.replace(
+				var header = performMetadataReplacements(siteMetadata, headerSource).replace(
 					metadataMarker + 'Title' + metadataMarker,
 					seekingDay.format('{Weekday}, {Month} {d}, {Year}'));
 				response.status(200).send(header + html + footerSource);
