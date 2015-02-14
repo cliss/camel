@@ -232,6 +232,7 @@ Should you happen to use Camel, I'd love to know. Please [contact me][co].
 
 # Change Log
 
+* __1.4.4__ Add support for Facebook Open Graph.
 * __1.4.3__ Add support for Twitter cards; thanks to [@tofias](https://twitter.com/tofias)
   for the help.
 * __1.4.2__ Now provides for `/rss-alternate`, which points link posts to internal links
