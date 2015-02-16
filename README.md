@@ -49,11 +49,11 @@ and used from that point forward.
        link posts in RSS, but is appended to all RSS entries.
 * It's worth noting there are some [Handlebars][hb] templates in use:
     * `index.md`
-    * `@@ DayTemplate` - used to render a day
-    * `@@ ArticlePartial` – used to render a single article in a day
-    * `@@ FooterTemplate` - used to render pagination
+        * `@@ DayTemplate` - used to render a day
+        * `@@ ArticlePartial` – used to render a single article in a day
+        * `@@ FooterTemplate` - used to render pagination
     * `postHeader.html` - placed on every post between the site header and post content
-    * `rssHeader.html` - placed on the bottom of every RSS item
+    * `rssFooter.html` - placed on the bottom of every RSS item
 * If you'd like to have Camel post to Twitter, set four environment variables (see below)
 
 [hb]: http://handlebarsjs.com/
@@ -98,18 +98,22 @@ To use Camel, the following files are required:
         |     |        +-- some-other-post.md
         |     |        `-- yet-another-post.md
         |     `-- 5/
-        |         `-- 1/
-        |             `-- newest-blog-post.md
+        |         +-- 1/
+        |         |   `-- newest-blog-post.md
+        |         `-- 5/
+        |             `-- some-cool-website.redirect
         `-- etc.
 
 For each post, metadata is specified at the top, and can be leveraged in the body. For example:
 
     @@ Title=Test Post
     @@ Date=2014-05 17:50
+    @@ Description=This is a short description used in Twitter cards and Facebook Open Graph.
+    @@ Image=http://somehost.com/someimage.png
 
     This is a *test post* entitled "@@Title@@".
 
-The title and date are required. Any other metadata is optional.
+The title and date are required. Any other metadata, such as `Description` and `Image`, is optional.
 
 ### Link Posts
 As of version 1.3, link posts are supported. To create a link post, simply add a `Link`
@@ -223,12 +227,8 @@ Please update this file & issue a pull request if you'd like your site featured 
 
 Camel is MIT-Licensed.
 
-I'd appreciate it you provided a link back to either this repository, or [my website][c],
-on any sites that run Camel.
-
-Should you happen to use Camel, I'd love to know. Please [contact me][co].
-
-[co]: http://www.caseyliss.com/contact
+While by no means neccessary, I'd very much appreciate it you provided a link back to
+either this repository, or [my website][c], on any sites that run Camel.
 
 # Change Log
 
