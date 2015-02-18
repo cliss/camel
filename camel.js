@@ -270,14 +270,25 @@ function tweetLatestPost() {
 				if (lastUrl !== link) {
 					console.log('Tweeting new link: ' + link);
 
-					var params = {
-						status: latestPost.metadata.Title + '\n\n' + link
-					};
-					twitterClient.post('statuses/update', params, function (error, tweet, response) {
-							if (error) {
-								console.log(JSON.stringify(error, undefined, 2));
-								throw error;
-							}
+					// Figure out how many characters we have to play with.
+					twitterClient.get('help/configuration', null, function (error, configuration) {
+						var suffix = " \n\n";
+						var maxSize = 140 - configuration.short_url_length_https - suffix.length;
+
+						// Shorten the title if need be.
+						var title = latestPost.metadata.Title;
+						if (title.length > maxSize) {
+							title = title.substring(0, maxSize - 3) + '...';
+						}
+
+						var params = {
+							status: title + suffix + link
+						};
+						twitterClient.post('statuses/update', params, function (error, tweet, response) {
+								if (error) {
+									console.log(JSON.stringify(error, undefined, 2));
+								}
+						});
 					});
 				} else {
 					console.log('Twitter is up to date.');

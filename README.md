@@ -232,6 +232,8 @@ either this repository, or [my website][c], on any sites that run Camel.
 
 # Change Log
 
+* __1.4.5__ Fix auto-tweeter not considering too-long titles
+  (issue #[21](https://github.com/cliss/camel/issues/21))
 * __1.4.4__ Add support for Facebook Open Graph.
 * __1.4.3__ Add support for Twitter cards; thanks to [@tofias](https://twitter.com/tofias)
   for the help.
