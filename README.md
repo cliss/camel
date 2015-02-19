@@ -158,15 +158,15 @@ As of version 1.4, Camel can automatically tweet when a new post is discovered. 
 requires a custom app to be set up for your blog; you can set this up [at Twitter][tdev].
 To enable, specify four environment variables to correspond to those Twitter issues:
 
-    * `TWITTER_CONSUMER_KEY`
-    * `TWITTER_CONSUMER_SECRET`
-    * `TWITTER_ACCESS_TOKEN`
-    * `TWITTER_TOKEN_SECRET`
+   * `TWITTER_CONSUMER_KEY`
+   * `TWITTER_CONSUMER_SECRET`
+   * `TWITTER_ACCESS_TOKEN`
+   * `TWITTER_TOKEN_SECRET`
 
 Additionally, a couple of variables up at the top of the file need to be set:
 
-    * `twitterUsername` - the username of the Twitter account that will be tweeted from.
-    * `twitterClientNeedle` - a portion of the client's name
+   * `twitterUsername` - the username of the Twitter account that will be tweeted from.
+   * `twitterClientNeedle` - a portion of the client's name
 
 Upon startup, and when the caches are cleaned, Camel will look at the most recent tweets
 by the account in question by the app with a name that contains `twitterClientNeedle`. It
