@@ -232,7 +232,7 @@ either this repository, or [my website][c], on any sites that run Camel.
 
 # Change Log
 
-* __1.4.6__ Change deep homepage pages to /page/N instead of /?p=N. Maintains support for
+* __1.4.6__ Change deep homepage pages to `/page/N` instead of `/?p=N`. Maintains support for
   original, query string based URLs. Upgrade to latest version of packages.
 * __1.4.5__ Fix auto-tweeter not considering too-long titles
   (issue #[21](https://github.com/cliss/camel/issues/21))
