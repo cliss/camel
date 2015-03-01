@@ -212,7 +212,7 @@ that pages will have *at least* N posts, but possibly more. In fact, a single pa
 quite a few more than N posts if, say, on one lucrative day there are 1.5*N or 2*N posts.
 
 Pagination is only necessary on the homepage, and page numbers are 1-based. Pages greater than
-1 are loaded by passing the query string parameter p. For example, `hostname/?p=3` for page 3.
+1 are loaded by passing the query string parameter p. For example, `hostname/page/3` for page 3.
 
 # Status
 
@@ -232,6 +232,8 @@ either this repository, or [my website][c], on any sites that run Camel.
 
 # Change Log
 
+* __1.4.6__ Change deep homepage pages to /page/N instead of /?p=N. Maintains support for
+  original, query string based URLs. Upgrade to latest version of packages.
 * __1.4.5__ Fix auto-tweeter not considering too-long titles
   (issue #[21](https://github.com/cliss/camel/issues/21))
 * __1.4.4__ Add support for Facebook Open Graph.
