@@ -232,6 +232,8 @@ either this repository, or [my website][c], on any sites that run Camel.
 
 # Change Log
 
+* __1.4.7__ Tweak postRegex to allow for posts that have trailing `+` in their name, such
+  as [this one](http://www.caseyliss.com/2014/10/2/emoji++)
 * __1.4.6__ Change deep homepage pages to `/page/N` instead of `/?p=N`. Maintains support for
   original, query string based URLs. Upgrade to latest version of packages.
 * __1.4.5__ Fix auto-tweeter not considering too-long titles
