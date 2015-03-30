@@ -40,7 +40,6 @@ var templateRoot = './templates/';
 var metadataMarker = '@@';
 var maxCacheSize = 50;
 var postsPerPage = 10;
-var postRegex = /^(.\/)?posts\/\d{4}\/\d{1,2}\/\d{1,2}\/(\w|-|\+)*(.redirect|.md)?$/;
 var footnoteAnchorRegex = /[#"]fn\d+/g;
 var footnoteIdRegex = /fnref\d+/g;
 var utcOffset = 5;
@@ -154,7 +153,7 @@ function generateHtmlAndMetadataForFile(file) {
 		var metadata = parseMetadata(lines.metadata);
 		metadata.relativeLink = externalFilenameForFile(file);
 		// If this is a post, assume a body class of 'post'.
-		if (postRegex.test(file)) {
+		if (fileIsPost(file)) {
 			metadata.BodyClass = 'post';
 		}
 
@@ -174,6 +173,11 @@ function generateHtmlAndMetadataForFile(file) {
 	}
 
 	return fetchFromCache(file);
+}
+
+function fileIsPost(file) {
+	var postRegex = /^(.\/)?posts\/\d{4}\/\d{1,2}\/\d{1,2}\/(\w|-|\+)*(.redirect|.md)?$/;
+	return postRegex.test(file);
 }
 
 // Gets all the posts, grouped by day and sorted descending.
@@ -198,7 +202,7 @@ function allPostsSortedAndGrouped(completion) {
 		completion(allPostsSortedGrouped);
 	} else {
 		qfs.listTree(postsRoot, function (name, stat) {
-			return postRegex.test(name);
+			return fileIsPost(name);
 		}).then(function (files) {
 			// Lump the posts together by day
 			var groupedFiles = _.groupBy(files, function (file) {
