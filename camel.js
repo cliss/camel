@@ -28,6 +28,7 @@ var twitterClient = new Twitter({
 var app = express();
 app.use(compress());
 app.use(express.static("public"));
+app.use(express.static("posts"));
 app.use(function (request, response, next) {
 	response.header('X-powered-by', 'Camel (https://github.com/cliss/camel)');
 	next();
