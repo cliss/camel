@@ -256,7 +256,8 @@ function tweetLatestPost() {
 			while (lastUrl === null && i < tweets.length) {
 				if (tweets[i].source.has(twitterClientNeedle) &&
 					tweets[i].entities &&
-					tweets[i].entities.urls) {
+					tweets[i].entities.urls
+					tweets[i].entities.urls.length > 0) {
 					lastUrl = tweets[i].entities.urls[0].expanded_url;
 				} else {
 					i += 1;
@@ -271,7 +272,7 @@ function tweetLatestPost() {
 					console.log('Tweeting new link: ' + link);
 
 					// Figure out how many characters we have to play with.
-					twitterClient.get('help/configuration', null, function (error, configuration) {
+					twitterClient.get('help/configuration', function (error, configuration, response) {
 						var suffix = " \n\n";
 						var maxSize = 140 - configuration.short_url_length_https - suffix.length;
 
