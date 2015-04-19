@@ -175,6 +175,22 @@ post's URL, then a tweet is fired off.
 
 [tdev]: https://apps.twitter.com
 
+### Authentication
+
+As of version 1.5.0, basic authentication is supported. It is selectively used on individual
+routes in order to provide a small barrier for entry for administrative tasks, most
+specifically, rendering a draft post. Naturally, basic auth is an inherently insecure
+protection mechanism; it is provided simply to prevent drive-bys.
+
+To enable basic authentication, two environment variables are required:
+
+	* `AUTH_USER_NAME`
+	* `AUTH_PASSWORD`
+
+By default, the `/render-draft` endpoint requires basic auth to actually render a draft
+post.
+
+
 # Quirks
 
 There are a couple of quirks, which don't bother me, but may bother you.
@@ -232,6 +248,7 @@ either this repository, or [my website][c], on any sites that run Camel.
 
 # Change Log
 
+* __1.5.0__ Add `/render-draft` route with basic authentication.
 * __1.4.8__ Fix broken auto-tweeter.
 * __1.4.7__ Tweak postRegex to allow for posts that have trailing `+` in their name, such
   as [this one](http://www.caseyliss.com/2014/10/2/emoji++)
