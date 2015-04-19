@@ -55,6 +55,8 @@ and used from that point forward.
     * `postHeader.html` - placed on every post between the site header and post content
     * `rssFooter.html` - placed on the bottom of every RSS item
 * If you'd like to have Camel post to Twitter, set four environment variables (see below)
+* If you'd like to support endpoints that require [basic auth](https://en.wikipedia.org/wiki/Basic_access_authentication),
+  set two environment variables (see below).
 
 [hb]: http://handlebarsjs.com/
 
