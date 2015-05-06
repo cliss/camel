@@ -233,11 +233,11 @@ chances are quite high that your distro DOES NOT come with Git installed.
 	
 to get the latest git version.
 
-With Git installed you can go ahead and create the directory for Camel.
+With Git installed you can go ahead move where Camel will live.
 
 	cd /var/www
 	
-to move into the directory created by Nginx where your website should live and then
+to move into the directory created by Nginx.
 
 	git clone https://github.com/cliss/camel.git
 	
@@ -249,7 +249,7 @@ This is what we need NPM for.
 	cd camel
 	npm install
 	
-to make the package manager look through all the things it needs to run Camel.
+Npm will look at everything Camel needs and installs it.
 
 After the installation is completed we want Nginx to proxy Camel to the world.
 We can do this by creating a new config file for Nginx to look at by running
@@ -274,7 +274,7 @@ A really basic text editor will show up and you can copy this config into it.
 ```
 
 Camel is running locally on port 5000 and Nginx will just proxy all requests back and forth.
-The next things we need to do is that we need to enable the site and the restart Nginx so that we can access it.
+The next thing we need to do is that we need to enable the site and the restart Nginx so that we can access it.
 
 	cp sites-available/camel.conf sites-enabled/camel.conf
 	service nginx restart
