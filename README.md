@@ -211,7 +211,7 @@ Maybe you should do a little write up on how you deployed Camel on Heroku.
 You can also run Camel easily on a VPS like [Linode][linode] or [DigitalOcean][dg] with your 
 favorite Linux distro and Nginx. All we need for that is a server instance running and secured.
 If you don't know anything about Linux and servers but want to learn how to operate them you can simply
-check out their great documentation which will get your VPS up and runnig in ~30 minutes.
+check out their great documentation ([linode](https://www.linode.com/docs/getting-started) or [digitalocean](https://www.digitalocean.com/help/technical/setup/) which will get your VPS up and runnig in ~30 minutes.
 
 
 Since Camel is written in NodeJS we obviously need NodeJS.
