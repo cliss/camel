@@ -53,9 +53,10 @@
   },
   "license": "MIT",
   "dependencies": {
-    "body-parser": "^1.12.2",
-    "compression": "^1.4.3",
-    "express": "^4.12.3",
+    "basic-auth": "^1.0.1",
+    "body-parser": "^1.12.4",
+    "compression": "^1.4.4",
+    "express": "^4.12.4",
     "handlebars": "^2.0.0",
     "markdown-it": "^3.1.0",
     "markdown-it-footnote": "^0.1.0",
