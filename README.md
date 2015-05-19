@@ -186,8 +186,8 @@ protection mechanism; it is provided simply to prevent drive-bys.
 
 To enable basic authentication, two environment variables are required:
 
-	* `AUTH_USER_NAME`
-	* `AUTH_PASSWORD`
+    * `AUTH_USER_NAME`
+    * `AUTH_PASSWORD`
 
 By default, the `/render-draft` endpoint requires basic auth to actually render a draft
 post.
