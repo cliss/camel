@@ -60,6 +60,7 @@
     "handlebars": "^2.0.0",
     "markdown-it": "^3.1.0",
     "markdown-it-footnote": "^0.1.0",
+    "mkdirp": "^0.5.1",
     "q-io": "^1.12.0",
     "rss": "^1.1.1",
     "sugar": "^1.4.1",

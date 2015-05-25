@@ -819,12 +819,26 @@ app.get('/count', function (request, response) {
 
 
 
-app.post('/render-draft', [requireAuth, bodyParser.urlencoded({extended: true})], function (request, response) {
+app.post('/render-draft', [requireAuth, bodyParser.urlencoded({ extended: true })], function (request, response) {
 	var pieces = getLinesFromData(request.body.markdown);
 	pieces.metadata = _.union(pieces.metadata, ["@@ BodyClass=post"]);
 	//var titleIndex = pieces.metadata.findIndex(/^@@ Title=/);
 	//pieces.metadata[titleIndex] = "@@ Title=DRAFT – " + pieces.metadata[titleIndex].substr(9) + " – DRAFT";
 	var result = generateHtmlAndMetadataForLines(pieces);
+	if (request.body.slug) {
+		var date = new Date(result.metadata.Date);
+
+		var path = postsRoot + date.getFullYear() + '/' + (date.getMonth() + 1) + '/' + date.getDate() + '/';
+		fs.mkdir(path, function () {
+			fs.open(path + request.body.slug + '.md', 'w', function (err, fd) {
+				console.log(JSON.stringify(err));
+				fs.write(fd, request.body.markdown, function (err, written, str) {
+					console.log('New post ' + path + request.body.slug + '.md' + ' written.');
+					emptyCache();
+				});
+			});
+		});
+	}
 	response.send(result.html());
 });
 
