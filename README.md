@@ -32,7 +32,7 @@ and used from that point forward.
 1. Install [Node][n] & [npm][npm]
 2. Clone the repository
 3. Get all the dependencies using NPM: `npm install`
-4. `node ./camel.js`
+4. `node ./camel.js` or using `npm start`
 
 [npm]: https://www.npmjs.org/
 
