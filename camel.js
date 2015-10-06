@@ -2,6 +2,10 @@
  * INITIALIZATION                                  *
  ***************************************************/
 
+// load ENV variables from .env file
+// use .ev.sample files as a starting point
+require('dotenv').load({silent: true});
+
 var express = require('express');
 var bodyParser = require('body-parser');
 var compress = require('compression');

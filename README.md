@@ -60,6 +60,14 @@ and used from that point forward.
 
 [hb]: http://handlebarsjs.com/
 
+## Configuration - Environment Variables
+
+You can define ENV variables used by Camel in one of three (3) ways:
+
+1. Heroku admin panel
+2. export function in bash/zsh shells.
+3. .env file - use .env.example as a staring point
+
 ## Files
 
 To use Camel, the following files are required:

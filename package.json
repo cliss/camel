@@ -1,6 +1,6 @@
 {
   "name": "Camel",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "description": "FeatureLiss blogging software",
   "keywords": [
     "blog",
@@ -48,7 +48,7 @@
     }
   ],
   "bugs": "https://github.com/cliss/camel/issues",
- "scripts": {
+  "scripts": {
     "start": "nodemon ./camel.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -57,6 +57,7 @@
     "basic-auth": "^1.0.1",
     "body-parser": "^1.12.4",
     "compression": "^1.4.4",
+    "dotenv": "^1.2.0",
     "express": "^4.12.4",
     "handlebars": "^2.0.0",
     "markdown-it": "^3.1.0",
