@@ -9,3 +9,6 @@ pids
 
 # Dependencies
 node_modules
+
+# env variables
+.env
