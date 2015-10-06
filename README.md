@@ -66,7 +66,7 @@ You can define ENV variables used by Camel in one of three (3) ways:
 
 1. Heroku admin panel
 2. export function in bash/zsh shells.
-3. .env file - use .env.example as a staring point
+3. .env file - use .env.example as a starting point
 
 ## Files
 
