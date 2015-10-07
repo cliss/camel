@@ -258,6 +258,8 @@ either this repository, or [my website][c], on any sites that run Camel.
 
 # Change Log
 
+* __1.5.2__ Prevent display of posts dated in the future.
+* __1.5.1__ Add ability to define ENV variables using a `.env` file.
 * __1.5.0__ Add `/render-draft` route with basic authentication.
 * __1.4.8__ Fix broken auto-tweeter.
 * __1.4.7__ Tweak postRegex to allow for posts that have trailing `+` in their name, such

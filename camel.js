@@ -1,3 +1,11 @@
+/// <reference path="typings/node/node.d.ts"/>
+/// <reference path="typings/express/express.d.ts"/>
+/// <reference path="typings/underscore/underscore.d.ts"/>
+/// <reference path="typings/sugar/sugar.d.ts"/>
+/// <reference path="typings/handlebars/handlebars.d.ts"/>
+/// <reference path="typings/body-parser/body-parser.d.ts" />
+/// <reference path="typings/q-io/Q-io.d.ts" />
+
 /***************************************************
  * INITIALIZATION                                  *
  ***************************************************/
@@ -248,6 +256,10 @@ function allPostsSortedAndGrouped(completion) {
 
             // For each day...
             _.each(sortedKeys, function (key) {
+                if (new Date(key) > new Date()) {
+                  return;
+                }
+				
                 // Get all the filenames...
                 var articleFiles = groupedFiles[key];
                 var articles = [];
