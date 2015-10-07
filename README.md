@@ -32,7 +32,7 @@ and used from that point forward.
 1. Install [Node][n] & [npm][npm]
 2. Clone the repository
 3. Get all the dependencies using NPM: `npm install`
-4. `node ./camel.js`
+4. `node ./camel.js` or using `npm start`
 
 [npm]: https://www.npmjs.org/
 
@@ -59,6 +59,14 @@ and used from that point forward.
   set two environment variables (see below).
 
 [hb]: http://handlebarsjs.com/
+
+## Configuration - Environment Variables
+
+You can define ENV variables used by Camel in one of three (3) ways:
+
+1. Heroku admin panel
+2. export function in bash/zsh shells.
+3. .env file - use .env.example as a starting point
 
 ## Files
 
@@ -250,6 +258,8 @@ either this repository, or [my website][c], on any sites that run Camel.
 
 # Change Log
 
+* __1.5.2__ Prevent display of posts dated in the future.
+* __1.5.1__ Add ability to define ENV variables using a `.env` file.
 * __1.5.0__ Add `/render-draft` route with basic authentication.
 * __1.4.8__ Fix broken auto-tweeter.
 * __1.4.7__ Tweak postRegex to allow for posts that have trailing `+` in their name, such

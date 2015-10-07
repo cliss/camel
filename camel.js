@@ -1,6 +1,18 @@
+/// <reference path="typings/node/node.d.ts"/>
+/// <reference path="typings/express/express.d.ts"/>
+/// <reference path="typings/underscore/underscore.d.ts"/>
+/// <reference path="typings/sugar/sugar.d.ts"/>
+/// <reference path="typings/handlebars/handlebars.d.ts"/>
+/// <reference path="typings/body-parser/body-parser.d.ts" />
+/// <reference path="typings/q-io/Q-io.d.ts" />
+
 /***************************************************
  * INITIALIZATION                                  *
  ***************************************************/
+
+// load ENV variables from .env file
+// use .ev.sample files as a starting point
+require('dotenv').load({silent: true});
 
 var express = require('express');
 var bodyParser = require('body-parser');
@@ -51,8 +63,8 @@ var footnoteAnchorRegex = /[#"]fn\d+/g;
 var footnoteIdRegex = /fnref\d+/g;
 var utcOffset = 5;
 var cacheResetTimeInMillis = 1800000;
-var twitterUsername = 'caseylisscom';
-var twitterClientNeedle = 'Camel Spitter';
+var twitterUsername = process.env.TWITTER_USERNAME; // 'caseylisscom';
+var twitterClientNeedle = process.env.TWITTER_CLIENT_NEEDLE; //'Camel Spitter';
 
 var renderedPosts = {};
 var renderedRss = {};
@@ -244,6 +256,10 @@ function allPostsSortedAndGrouped(completion) {
 
             // For each day...
             _.each(sortedKeys, function (key) {
+                if (new Date(key) > new Date()) {
+                  return;
+                }
+				
                 // Get all the filenames...
                 var articleFiles = groupedFiles[key];
                 var articles = [];
