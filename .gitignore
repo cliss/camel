@@ -12,3 +12,6 @@ node_modules
 
 # env variables
 .env
+
+# Mac artifacts
+.DS_Store
