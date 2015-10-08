@@ -247,7 +247,13 @@ features that probably *could* be added, but none that I'm actively planning.
 
 [c]: http://www.caseyliss.com/
 
-Please update this file & issue a pull request if you'd like your site featured here.
+## Branches
+
+There is a branch, [`postuploads`][pu], that allows for posts to be uploaded via the same
+mechanism as making a draft. This isn't useful for [www.caseyliss.com][c], due to the way
+that Camel is hosted, but may be useful for others.
+
+[pu]: https://github.com/cliss/camel/tree/postuploads
 
 # License
 
