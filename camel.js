@@ -122,12 +122,17 @@ function fetchFromCache(file) {
 
 // Separate the metadata from the body
 function getLinesFromData(data) {
+	var lines = data.lines();
 	// Extract the metadata
-    var metadataLines = _.filter(data.lines(), function (line) { return line.startsWith(metadataMarker); });
-    // The body starts after metadata. Thus, it starts at (index of last line of metadata + length of metadata).
-    var body = data.substring(data.indexOf(metadataLines[metadataLines.length - 1]) + metadataLines[metadataLines.length - 1].length).trim();
-
-    return {metadata: metadataLines, body: body};
+	var metadataEnds = _.findIndex(lines, function (line) {
+		 return line.trim().length === 0; 
+	});
+	metadataEnds = metadataEnds === -1 ? lines.length : metadataEnds;
+	
+	return { 
+		metadata: lines.slice(0, metadataEnds), 
+		body: lines.slice(metadataEnds).join('\n') 
+	};
 }
 
 // Gets all the lines in a post and separates the metadata from the body
@@ -148,13 +153,16 @@ function parseMetadata(lines) {
         if (line.has('=')) {
             var firstIndex = line.indexOf('=');
             retVal[line.first(firstIndex)] = line.from(firstIndex + 1);
-        }
+        } else if (line.has(':')) {
+			var firstIndex = line.indexOf(':');
+			retVal[line.first(firstIndex)] = line.from(firstIndex + 2);
+		}
     });
 
     // NOTE: Some metadata is added in generateHtmlAndMetadataForFile().
 
     // Merge with site default metadata
-    Object.merge(retVal, siteMetadata, false, function(key, targetVal, sourceVal) {
+    Object.merge(retVal, siteMetadata, false, function (key, targetVal, sourceVal) {
         // Ensure that the file wins over the defaults.
         return targetVal;
     });

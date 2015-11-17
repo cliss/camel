@@ -125,6 +125,17 @@ For each post, metadata is specified at the top, and can be leveraged in the bod
 
 The title and date are required. Any other metadata, such as `Description` and `Image`, is optional.
 
+As of version 1.5.3, you can optionally use 
+[MultiMarkdown-style metadata](https://github.com/fletcher/MultiMarkdown/wiki/MultiMarkdown-Syntax-Guide#metadata).
+If you choose to use that style, the above would be:
+
+    Title: Test Post
+    Date: 2014-05 17:50
+    Description: This is a short description used in Twitter cards and Facebook Open Graph.
+    Image: http://somehost.com/someimage.png
+
+    This is a *test post* entitled "@@Title@@".
+
 ### Link Posts
 As of version 1.3, link posts are supported. To create a link post, simply add a `Link`
 metadata item:
@@ -264,6 +275,9 @@ either this repository, or [my website][c], on any sites that run Camel.
 
 # Change Log
 
+* __1.5.3__ Adds support for 
+  [MultiMarkdown-style metadata](https://github.com/fletcher/MultiMarkdown/wiki/MultiMarkdown-Syntax-Guide#metadata).
+  Previous-style metadata (prefix with `@@`) is still supported.
 * __1.5.2__ Prevent display of posts dated in the future.
 * __1.5.1__ Add ability to define ENV variables using a `.env` file.
 * __1.5.0__ Add `/render-draft` route with basic authentication.
