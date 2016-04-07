@@ -278,6 +278,8 @@ either this repository, or [my website][c], on any sites that run Camel.
 
 # Change Log
 
+* __1.5.4__ Fix bug wherein a MultiMarkdown-style metadata line that contained a URL with a
+  query string caused a crash. 
 * __1.5.3__ Adds support for 
   [MultiMarkdown-style metadata](http://fletcher.github.io/MultiMarkdown-5/syntax.html#metadata).
   Previous-style metadata (prefix with `@@`) is still supported.

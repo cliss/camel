@@ -1,6 +1,6 @@
 {
   "name": "Camel",
-  "version": "1.5.3",
+  "version": "1.5.4",
   "description": "FeatureLiss blogging software",
   "keywords": [
     "blog",
@@ -54,19 +54,19 @@
   },
   "license": "MIT",
   "dependencies": {
-    "basic-auth": "^1.0.1",
-    "body-parser": "^1.12.4",
-    "compression": "^1.4.4",
+    "basic-auth": "~1.0.3",
+    "body-parser": "^1.14.1",
+    "compression": "~1.5.2",
     "dotenv": "^1.2.0",
-    "express": "^4.12.4",
-    "handlebars": "^2.0.0",
-    "markdown-it": "^3.1.0",
-    "markdown-it-footnote": "^0.1.0",
-    "q-io": "^1.12.0",
-    "rss": "^1.1.1",
-    "sugar": "^1.4.1",
-    "twitter": "^1.2.5",
-    "underscore": "^1.8.3"
+    "express": "~4.13.3",
+    "handlebars": "^4.0.3",
+    "markdown-it": "^4.4.0",
+    "markdown-it-footnote": "^1.0.0",
+    "q-io": "^1.13.0",
+    "rss": "~1.1.1",
+    "sugar": "~1.4.1",
+    "twitter": "~1.2.5",
+    "underscore": "~1.8.3"
   },
   "engines": {
     "node": "0.12.x"

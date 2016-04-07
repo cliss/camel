@@ -148,12 +148,13 @@ function parseMetadata(lines) {
     var retVal = {};
 
     lines.each(function (line) {
-        line = line.replace(metadataMarker, '');
-        line = line.compact();
-        if (line.has('=')) {
+        if (line.has(metadataMarker) && line.has('=')) {
+            line = line.replace(metadataMarker, '');
+            line = line.compact();
             var firstIndex = line.indexOf('=');
             retVal[line.first(firstIndex)] = line.from(firstIndex + 1);
         } else if (line.has(':')) {
+            line = line.compact();
 			var firstIndex = line.indexOf(':');
 			retVal[line.first(firstIndex)] = line.from(firstIndex + 2);
 		}
