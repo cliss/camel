@@ -278,6 +278,9 @@ either this repository, or [my website][c], on any sites that run Camel.
 
 # Change Log
 
+* __1.5.5__ Fix bug in `/render-draft` where each line had a double carriage return. This
+  caused metadata to not be picked up properly, and thus the post not render properly.
+  In turn, that defeated most of the purpose of draft support in the first place.
 * __1.5.4__ Fix bug wherein a MultiMarkdown-style metadata line that contained a URL with a
   query string caused a crash. 
 * __1.5.3__ Adds support for 

@@ -122,6 +122,10 @@ function fetchFromCache(file) {
 
 // Separate the metadata from the body
 function getLinesFromData(data) {
+	// Drafts seem to treat carriage returns as "\r\n"; real
+	// posts are simply "\n". Remove all the "\r"s so that
+	// everything looks like we expect.
+	data = data.replace(/\r/g, '');
 	var lines = data.lines();
 	// Extract the metadata
 	var metadataEnds = _.findIndex(lines, function (line) {
