@@ -278,6 +278,8 @@ either this repository, or [my website][c], on any sites that run Camel.
 
 # Change Log
 
+* __1.5.6__ Fix bug wherein a `Description` that contains a `"` would not be escaped, and
+  thus would prematurely truncate `twitter:description` and `og:descripton` tags.
 * __1.5.5__ Fix bug in `/render-draft` where each line had a double carriage return. This
   caused metadata to not be picked up properly, and thus the post not render properly.
   In turn, that defeated most of the purpose of draft support in the first place.

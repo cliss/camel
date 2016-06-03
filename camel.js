@@ -163,6 +163,11 @@ function parseMetadata(lines) {
 			retVal[line.first(firstIndex)] = line.from(firstIndex + 2);
 		}
     });
+	
+	// Description could have a " in it that needs to be escaped.
+	if (Object.has(retVal, "Description")) {
+		retVal["Description"] = retVal["Description"].replace(/"/g, '&quot;')
+	}
 
     // NOTE: Some metadata is added in generateHtmlAndMetadataForFile().
 
