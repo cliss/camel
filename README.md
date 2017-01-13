@@ -219,6 +219,118 @@ post.
 
 There are a couple of quirks, which don't bother me, but may bother you.
 
+
+## Deploying Camel
+
+### Deploying Camel on Heroku (like [www.caseyliss.com](http://www.caseyliss.com))
+
+Hey Casey
+Maybe you should do a little write up on how you deployed Camel on Heroku.
+
+
+### Deploying Camel on a VPS with Nginx
+
+You can also run Camel easily on a VPS like [Linode][linode] or [DigitalOcean][dg] with your 
+favorite Linux distro and Nginx. All we need for that is a server instance running and secured.
+If you don't know anything about Linux and servers but want to learn how to operate them you can simply
+check out their great documentation ([linode](https://www.linode.com/docs/getting-started) or [digitalocean](https://www.digitalocean.com/help/technical/setup/)) which will get your VPS up and runnig in ~30 minutes.
+
+
+Since Camel is written in NodeJS we obviously need NodeJS.
+
+	apt-get install nodejs
+	
+to install NodeJS. With that package comes NPM which we'll also need later.
+
+Now that we have NodeJS we'll install [Nginx][nginx].
+
+	apt-get install nginx
+	
+This will be your webserver serving your blog to the internet.
+
+The next step will be cloning Camel directly from Github. If you haven't already installed it
+chances are quite high that your distro DOES NOT come with Git installed.
+
+	apt-get install git
+	
+to get the latest git version.
+
+With Git installed you can go ahead move where Camel will live.
+
+	cd /var/www
+	
+to move into the directory created by Nginx.
+
+	git clone https://github.com/cliss/camel.git
+	
+to clone the repo from Github.
+
+Now that you have optained a copy of Camel you have to get all the dependecies it needs.
+This is what we need NPM for.
+
+	cd camel
+	npm install
+	
+Npm will look at everything Camel needs and installs it.
+
+After the installation is completed we want Nginx to proxy Camel to the world.
+We can do this by creating a new config file for Nginx to look at by running
+
+	cd /etc/nginx
+	nano sites-available/camel.conf
+	
+A really basic text editor will show up and you can copy this config into it.
+
+```
+	server {
+		listen 80;
+		server_name -> your IP or domain name <- ;
+
+		location / {
+	    	proxy_set_header   X-Real-IP $remote_addr;
+	   		proxy_set_header   Host      $http_host;
+	    	proxy_pass         http://127.0.0.1:5000;
+	
+		}
+	}
+```
+
+Camel is running locally on port 5000 and Nginx will just proxy all requests back and forth.
+The next thing we need to do is that we need to enable the site and the restart Nginx so that we can access it.
+
+	cp sites-available/camel.conf sites-enabled/camel.conf
+	service nginx restart
+	
+Since we want Camel to run at all times and not start or stop it once our session breakes we will need something
+that will take care of this for us. There are options but for now we will use forever.
+
+	npm install -g forever
+
+Now that we have all the things needed to run Camel on our own VPS you can go ahead and launch everything.
+
+Forever is really easy to use but has one qurik to it. You have to tell it where the root of Camel is.
+Since we already are in Camels directory we can just run 
+
+	forever start camel.js
+
+This will start camel and it is now available at the IP or domain you specified in your camel.conf file Nginx uses.
+
+If you want to stop Camel again just use (if you are in Camel's directory)
+
+	forever stop camel.js 
+
+and you can check on how forever is doing and if the proccess is running by using
+
+	forever list
+	
+after you cd into Camel's directory.
+
+
+[linode]:https://www.linode.com
+[dg]:https://www.digitalocean.com
+[nginx]:http://nginx.org
+
+
 ## Adding a Post
 
 When a new post is created, if you want an instant refresh, you'll want to restart the
