@@ -273,7 +273,7 @@ that Camel is hosted, but may be useful for others.
 
 Camel is MIT-Licensed.
 
-While by no means neccessary, I'd very much appreciate it you provided a link back to
+While by no means neccessary, I'd very much appreciate it if you provided a link back to
 either this repository, or [my website][c], on any sites that run Camel.
 
 # Change Log
