@@ -11,7 +11,7 @@
  ***************************************************/
 
 // load ENV variables from .env file
-// use .ev.sample files as a starting point
+// use .env.example file as a starting point
 require('dotenv').load({silent: true});
 
 var express = require('express');
@@ -93,7 +93,7 @@ function requireAuth(request, response, next) {
     next();
 };
 
- function normalizedFileName(file) {
+function normalizedFileName(file) {
     var retVal = file;
     if (file.startsWith('posts')) {
         retVal = './' + file;
@@ -108,7 +108,7 @@ function fetchFromCache(file) {
     return renderedPosts[normalizedFileName(file)] || null;
 }
 
- function addRenderedPostToCache(file, postData) {
+function addRenderedPostToCache(file, postData) {
     //console.log('Adding to cache: ' + normalizedFileName(file));
     renderedPosts[normalizedFileName(file)] = _.extend({ file: normalizedFileName(file), date: new Date() }, postData);
 
@@ -236,7 +236,7 @@ function generateHtmlAndMetadataForFile(file) {
     return fetchFromCache(file);
 }
 
- // Gets all the posts, grouped by day and sorted descending.
+// Gets all the posts, grouped by day and sorted descending.
 // Completion handler gets called with an array of objects.
 // Array
 //   +-- Object
@@ -363,6 +363,7 @@ function tweetLatestPost() {
 	}
 }
 
+// Loads header or footer files from disk
 function loadHeaderFooter(file, completion) {
     fs.exists(templateRoot + file, function(exists) {
         if (exists) {
@@ -385,6 +386,7 @@ function emptyCache() {
     tweetLatestPost();
 }
 
+// Initialize application and load template files
 function init() {
     loadHeaderFooter('defaultTags.html', function (data) {
         // Note this comes in as a flat string; split on newlines for parsing metadata.
@@ -622,6 +624,7 @@ function generateRss(request, feedUrl, linkGenerator, completion) {
 	});
 }
 
+// Generates the HTML for the homepage
 function homepageBuilder(page, completion, redirect) {
 	var indexInfo = generateHtmlAndMetadataForFile(postsRoot + 'index.md');
 	var footnoteIndex = 0;
@@ -836,6 +839,7 @@ app.get('/:year/:month/:day/:slug', function (request, response) {
 //     response.send(205);
 // });
 
+// Show some basic stats
 app.get('/count', function (request, response) {
 	console.log("/count");
 	allPostsSortedAndGrouped(function (all) {
