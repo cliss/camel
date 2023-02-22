@@ -69,11 +69,11 @@ var twitterClientNeedle = process.env.TWITTER_CLIENT_NEEDLE; //'Camel Spitter';
 var renderedPosts = {};
 
 /* {
- *     www.caseyliss.com: {
+ *     hostone.website.com: {
  *         date: ""
  *         rss: ""   
  *     },
- *     linode.caseyliss.com: {
+ *     hosttwo.website.com: {
  *         date: ""
  *         rss: ""
  * 	   }
