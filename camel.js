@@ -750,10 +750,10 @@ app.get('/rss', function (request, response) {
     }
     response.type('application/rss+xml');
 
-	var previouslyRendered = renderedRss[request.hostname];
+    var previouslyRendered = renderedRss[request.hostname];
     if (typeof(previouslyRendered) === 'undefined' ||
-		typeof(previouslyRendered.date) === 'undefined' || 
-		new Date().getTime() - previouslyRendered.date.getTime() > 3600000) 
+        typeof(previouslyRendered.date) === 'undefined' || 
+        new Date().getTime() - previouslyRendered.date.getTime() > 3600000) 
 	{
 	    generateRss(request, '/rss', function (article) {
 			if (typeof(article.metadata.Link) !== 'undefined') {
@@ -775,10 +775,10 @@ app.get('/rss-alternate', function (request, response) {
     }
     response.type('application/rss+xml');
 
-	var previouslyRendered = renderedRss[request.hostname];
+    var previouslyRendered = renderedRss[request.hostname];
     if (typeof(previouslyRendered) === 'undefined' ||
-		typeof(previouslyRendered.date) === 'undefined' ||
-		new Date().getTime() - previouslyRendered.date.getTime() > 3600000) 
+        typeof(previouslyRendered.date) === 'undefined' ||
+        new Date().getTime() - previouslyRendered.date.getTime() > 3600000) 
 	{
 	    generateRss(request, '/rss-alternate', function (article) {
 			return externalFilenameForFile(article.file, request);
