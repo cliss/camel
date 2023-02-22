@@ -738,18 +738,18 @@ app.get('/rss', function (request, response) {
     }
     response.type('application/rss+xml');
 
-    if (typeof(renderedRss.date) === 'undefined' || new Date().getTime() - renderedRss.date.getTime() > 3600000) {
+    if (typeof(renderedRss[request.headers.host]) === 'undefined' || typeof(renderedRss[request.headers.host].date) === 'undefined' || new Date().getTime() - renderedRss[request.headers.host].date.getTime() > 3600000) {
 	    generateRss(request, '/rss', function (article) {
 			if (typeof(article.metadata.Link) !== 'undefined') {
 				return article.metadata.Link;
 			}
 			return externalFilenameForFile(article.file, request);
 		}, function (rss) {
-			renderedRss = rss;
-			response.status(200).send(renderedRss.rss);
+			renderedRss[request.headers.host] = rss;
+			response.status(200).send(renderedRss[request.headers.host].rss);
 		});
 	} else {
-		response.status(200).send(renderedRss.rss);
+		response.status(200).send(renderedRss[request.headers.host].rss);
 	}
 });
 
