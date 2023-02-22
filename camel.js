@@ -905,7 +905,7 @@ app.get('/:slug', function (request, response) {
  * STARTUP                                         *
  ***************************************************/
 init();
-var port = Number(process.env.PORT || 5005);
+var port = Number(process.env.PORT || 5000);
 server.listen(port, function () {
    console.log('Camel v' + version + ' server started on port %s', server.address().port);
 });
