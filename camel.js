@@ -733,23 +733,25 @@ app.get('/page/:page', function (request, response) {
 });
 
 app.get('/rss', function (request, response) {
+	var hostname = typeof(request) !== 'undefined' ? request.headers.host : 'global';
+
     if ('user-agent' in request.headers && request.headers['user-agent'].has('subscriber')) {
         console.log('RSS: ' + request.headers['user-agent']);
     }
     response.type('application/rss+xml');
 
-    if (typeof(renderedRss[request.headers.host]) === 'undefined' || typeof(renderedRss[request.headers.host].date) === 'undefined' || new Date().getTime() - renderedRss[request.headers.host].date.getTime() > 3600000) {
+    if (typeof(renderedRss[hostname]) === 'undefined' || typeof(renderedRss[hostname].date) === 'undefined' || new Date().getTime() - renderedRss[hostname].date.getTime() > 3600000) {
 	    generateRss(request, '/rss', function (article) {
 			if (typeof(article.metadata.Link) !== 'undefined') {
 				return article.metadata.Link;
 			}
 			return externalFilenameForFile(article.file, request);
 		}, function (rss) {
-			renderedRss[request.headers.host] = rss;
-			response.status(200).send(renderedRss[request.headers.host].rss);
+			renderedRss[hostname] = rss;
+			response.status(200).send(renderedRss[hostname].rss);
 		});
 	} else {
-		response.status(200).send(renderedRss[request.headers.host].rss);
+		response.status(200).send(renderedRss[hostname].rss);
 	}
 });
 
