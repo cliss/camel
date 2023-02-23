@@ -67,6 +67,18 @@ var twitterUsername = process.env.TWITTER_USERNAME; // 'caseylisscom';
 var twitterClientNeedle = process.env.TWITTER_CLIENT_NEEDLE; //'Camel Spitter';
 
 var renderedPosts = {};
+
+/* {
+ *     hostone.website.com: {
+ *         date: ""
+ *         rss: ""   
+ *     },
+ *     hosttwo.website.com: {
+ *         date: ""
+ *         rss: ""
+ * 	   }
+ * ]
+ */
 var renderedRss = {};
 var renderedAlternateRss = {};
 var allPostsSortedGrouped = {};
@@ -738,18 +750,22 @@ app.get('/rss', function (request, response) {
     }
     response.type('application/rss+xml');
 
-    if (typeof(renderedRss.date) === 'undefined' || new Date().getTime() - renderedRss.date.getTime() > 3600000) {
+    var previouslyRendered = renderedRss[request.hostname];
+    if (typeof(previouslyRendered) === 'undefined' ||
+        typeof(previouslyRendered.date) === 'undefined' || 
+        new Date().getTime() - previouslyRendered.date.getTime() > 3600000) 
+	{
 	    generateRss(request, '/rss', function (article) {
 			if (typeof(article.metadata.Link) !== 'undefined') {
 				return article.metadata.Link;
 			}
 			return externalFilenameForFile(article.file, request);
-		}, function (rss) {
-			renderedRss = rss;
-			response.status(200).send(renderedRss.rss);
+		}, function (rssPair) {
+			renderedRss[request.hostname] = rssPair;
+			response.status(200).send(rssPair.rss);
 		});
 	} else {
-		response.status(200).send(renderedRss.rss);
+		response.status(200).send(previouslyRendered.rss);
 	}
 });
 
@@ -759,15 +775,19 @@ app.get('/rss-alternate', function (request, response) {
     }
     response.type('application/rss+xml');
 
-    if (typeof(renderedAlternateRss.date) === 'undefined' || new Date().getTime() - renderedAlternateRss.date.getTime() > 3600000) {
+    var previouslyRendered = renderedRss[request.hostname];
+    if (typeof(previouslyRendered) === 'undefined' ||
+        typeof(previouslyRendered.date) === 'undefined' ||
+        new Date().getTime() - previouslyRendered.date.getTime() > 3600000) 
+	{
 	    generateRss(request, '/rss-alternate', function (article) {
 			return externalFilenameForFile(article.file, request);
-		}, function (rss) {
-			renderedAlternateRss = rss;
-			response.status(200).send(renderedAlternateRss.rss);
+		}, function (rssPair) {
+			renderedAlternateRss[request.hostname] = rssPair;
+			response.status(200).send(rssPair.rss);
 		});
 	} else {
-		response.status(200).send(renderedAlternateRss.rss);
+		response.status(200).send(previouslyRendered.rss);
 	}
 });
 
