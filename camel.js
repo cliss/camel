@@ -4,7 +4,6 @@
 /// <reference path="typings/sugar/sugar.d.ts"/>
 /// <reference path="typings/handlebars/handlebars.d.ts"/>
 /// <reference path="typings/body-parser/body-parser.d.ts" />
-/// <reference path="typings/q-io/Q-io.d.ts" />
 
 /***************************************************
  * INITIALIZATION                                  *
@@ -12,14 +11,13 @@
 
 // load ENV variables from .env file
 // use .env.example file as a starting point
-require('dotenv').load({silent: true});
+require('dotenv').config();
 
 var express = require('express');
 var bodyParser = require('body-parser');
 var compress = require('compression');
 var http = require('http');
 var fs = require('fs');
-var qfs = require('q-io/fs');
 var sugar = require('sugar');
 var _ = require('underscore');
 var markdownit = require('markdown-it')({
@@ -30,14 +28,7 @@ var markdownit = require('markdown-it')({
 var Rss = require('rss');
 var Handlebars = require('handlebars');
 var version = require('./package.json').version;
-var Twitter = require('twitter');
 var basicAuth = require('basic-auth');
-var twitterClient = new Twitter({
-	consumer_key: process.env.TWITTER_CONSUMER_KEY,
-	consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
-	access_token_key: process.env.TWITTER_ACCESS_TOKEN,
-	access_token_secret: process.env.TWITTER_TOKEN_SECRET
-});
 var draftAuthInfo = {
 	user: process.env.AUTH_USER_NAME,
 	pass: process.env.AUTH_PASSWORD
@@ -63,9 +54,6 @@ var footnoteAnchorRegex = /[#"]fn\d+/g;
 var footnoteIdRegex = /fnref\d+/g;
 var utcOffset = 5;
 var cacheResetTimeInMillis = 1800000;
-var twitterUsername = process.env.TWITTER_USERNAME; // 'caseylisscom';
-var twitterClientNeedle = process.env.TWITTER_CLIENT_NEEDLE; //'Camel Spitter';
-
 var renderedPosts = {};
 
 /* {
@@ -269,9 +257,8 @@ function allPostsSortedAndGrouped(completion) {
     if (Object.size(allPostsSortedGrouped) !== 0) {
         completion(allPostsSortedGrouped);
     } else {
-        qfs.listTree(postsRoot, function (name, stat) {
-            return postRegex.test(name);
-        }).then(function (files) {
+        fs.promises.readdir(postsRoot, { recursive: true }).then(function (files) {
+            files = files.map(function(f) { return postsRoot + f; }).filter(function(f) { return postRegex.test(f); });
             // Lump the posts together by day
             var groupedFiles = _.groupBy(files, function (file) {
                 var parts = file.split('/');
@@ -320,61 +307,6 @@ function allPostsSortedAndGrouped(completion) {
     }
 }
 
-function tweetLatestPost() {
-	if (twitterClient !== null && typeof(process.env.TWITTER_CONSUMER_KEY) !== 'undefined') {
-		twitterClient.get('statuses/user_timeline', {screen_name: twitterUsername}, function (error, tweets) {
-			if (error) {
-				console.log(JSON.stringify(error, undefined, 2));
-				return;
-			}
-
-			var lastUrl = null, i = 0;
-			while (lastUrl === null && i < tweets.length) {
-				if (tweets[i].source.has(twitterClientNeedle) &&
-					tweets[i].entities &&
-					tweets[i].entities.urls &&
-					tweets[i].entities.urls.length > 0) {
-					lastUrl = tweets[i].entities.urls[0].expanded_url;
-				} else {
-					i += 1;
-				}
-			}
-
-			allPostsSortedAndGrouped(function (postsByDay) {
-				var latestPost = postsByDay[0].articles[0];
-				var link = latestPost.metadata.SiteRoot + latestPost.metadata.relativeLink;
-
-				if (lastUrl !== link) {
-					console.log('Tweeting new link: ' + link);
-
-					// Figure out how many characters we have to play with.
-					twitterClient.get('help/configuration', function (error, configuration, response) {
-						var suffix = " \n\n";
-						var maxSize = 280 - configuration.short_url_length_https - suffix.length;
-
-						// Shorten the title if need be.
-						var title = latestPost.metadata.Title;
-						if (title.length > maxSize) {
-							title = title.substring(0, maxSize - 3) + '...';
-						}
-
-						var params = {
-							status: title + suffix + link
-						};
-						twitterClient.post('statuses/update', params, function (error, tweet, response) {
-								if (error) {
-									console.log(JSON.stringify(error, undefined, 2));
-								}
-						});
-					});
-				} else {
-					console.log('Twitter is up to date.');
-				}
-			});
-		});
-	}
-}
-
 // Loads header or footer files from disk
 function loadHeaderFooter(file, completion) {
     fs.exists(templateRoot + file, function(exists) {
@@ -394,8 +326,6 @@ function emptyCache() {
     renderedPosts = {};
     renderedRss = {};
     allPostsSortedGrouped = {};
-
-    tweetLatestPost();
 }
 
 // Initialize application and load template files
@@ -425,8 +355,6 @@ function init() {
 
     // Kill the cache every 30 minutes.
     setInterval(emptyCache, cacheResetTimeInMillis);
-
-    tweetLatestPost();
 }
 
 // Gets the rendered HTML for this file, with header/footer.
