@@ -1,0 +1,5 @@
+# Serves the Camel container at https://blog.atmosbox.test inside the box.
+blog.atmosbox.test {
+  tls internal
+  reverse_proxy blog:5000
+}

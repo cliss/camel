@@ -29,6 +29,7 @@ var Rss = require('rss');
 var Handlebars = require('handlebars');
 var version = require('./package.json').version;
 var basicAuth = require('basic-auth');
+var standardSite = require('./lib/standard-site');
 var draftAuthInfo = {
 	user: process.env.AUTH_USER_NAME,
 	pass: process.env.AUTH_PASSWORD
@@ -207,6 +208,12 @@ function generateHtmlAndMetadataForLines(lines, file) {
 		// If this is a post, assume a body class of 'post'.
 		if (postRegex.test(file)) {
 			metadata.BodyClass = 'post';
+			// A scheduled post is still reachable by URL, but has no record yet.
+			var documentUri = standardSite.folderDayHasArrived(normalizedFileName(file)) ?
+				standardSite.documentUri(siteMetadata.StandardSitePublication,
+					standardSite.publishedAtFor(metadata, normalizedFileName(file), utcOffset),
+					metadata.relativeLink) : null;
+			metadata.StandardSiteLinks = standardSite.linkTags(siteMetadata.StandardSitePublication, documentUri);
 		}
 	}
 
@@ -261,7 +268,8 @@ function allPostsSortedAndGrouped(completion) {
             files = files.map(function(f) { return postsRoot + f; }).filter(function(f) { return postRegex.test(f); });
             // Lump the posts together by day
             var groupedFiles = _.groupBy(files, function (file) {
-                var parts = file.split('/');
+                // file looks like ./posts/2014/5/1/slug.md
+                var parts = /posts\/(\d{4})\/(\d{1,2})\/(\d{1,2})\//.exec(file);
                 return new Date(parts[1], parts[2] - 1, parts[3]);
             });
 
@@ -328,11 +336,18 @@ function emptyCache() {
     allPostsSortedGrouped = {};
 }
 
+// Parses the contents of defaultTags.html into siteMetadata.
+function setSiteMetadata(data) {
+    // Note this comes in as a flat string; split on newlines for parsing metadata.
+    siteMetadata = parseMetadata(data.split('\n'));
+    // Every page gets the standard.site publication <link>; posts add their own document <link>.
+    siteMetadata.StandardSiteLinks = standardSite.linkTags(siteMetadata.StandardSitePublication);
+}
+
 // Initialize application and load template files
 function init() {
     loadHeaderFooter('defaultTags.html', function (data) {
-        // Note this comes in as a flat string; split on newlines for parsing metadata.
-        siteMetadata = parseMetadata(data.split('\n'));
+        setSiteMetadata(data);
 
         // This relies on the above, so nest it.
         loadHeaderFooter('header.html', function (data) {
@@ -630,6 +645,18 @@ function homepageBuilder(page, completion, redirect) {
  * ROUTES                                          *
  ***************************************************/
 
+// standard.site publication verification. Must be registered before the
+// /:year/:month route, which would otherwise match it.
+app.get('/.well-known/site.standard.publication', function (request, response) {
+	var publication = standardSite.parseAtUri(siteMetadata.StandardSitePublication);
+	if (!publication) {
+		response.status(404).send('Not found');
+		return;
+	}
+	response.type('text/plain; charset=UTF-8');
+	response.status(200).send(siteMetadata.StandardSitePublication.trim());
+});
+
 app.get('/', function (request, response) {
     // Determine which page we're on, and make that the filename
     // so we cache by paginated page.
@@ -832,8 +859,25 @@ app.get('/:slug', function (request, response) {
 /***************************************************
  * STARTUP                                         *
  ***************************************************/
-init();
-var port = Number(process.env.PORT || 5000);
-server.listen(port, function () {
-   console.log('Camel v' + version + ' server started on port %s', server.address().port);
-});
+// Exposed for scripts/standard-site-sync.js, which reads posts the same way.
+module.exports = {
+	postsRoot: postsRoot,
+	postRegex: postRegex,
+	utcOffset: utcOffset,
+	templateRoot: templateRoot,
+	setSiteMetadata: setSiteMetadata,
+	getSiteMetadata: function () { return siteMetadata; },
+	getLinesFromPost: getLinesFromPost,
+	parseMetadata: parseMetadata,
+	externalFilenameForFile: externalFilenameForFile,
+	performMetadataReplacements: performMetadataReplacements,
+	renderMarkdown: function (markdown) { return markdownit.render(markdown); }
+};
+
+if (require.main === module) {
+	init();
+	var port = Number(process.env.PORT || 5000);
+	server.listen(port, function () {
+	   console.log('Camel v' + version + ' server started on port %s', server.address().port);
+	});
+}

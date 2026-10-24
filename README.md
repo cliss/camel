@@ -29,7 +29,7 @@ and used from that point forward.
 
 ## Installation
 
-1. Install [Node][n] & [npm][npm]
+1. Install [Node][n] 22 or later & [npm][npm]
 2. Clone the repository
 3. Get all the dependencies using NPM: `npm install`
 4. `node ./camel.js` or using `npm start`
@@ -213,6 +213,55 @@ To enable basic authentication, two environment variables are required:
 
 By default, the `/render-draft` endpoint requires basic auth to actually render a draft
 post.
+
+### standard.site (AT Protocol)
+
+Camel can publish every post as a [standard.site](https://standard.site) record on
+AT Protocol, so Bluesky and other atproto apps can show rich cards for your posts and
+index them. The records live in your account's repository, so that account is the
+author.
+
+1. Create an app password for your Bluesky/atproto account and set three environment
+   variables:
+   * `ATP_IDENTIFIER` - your handle or DID
+   * `ATP_APP_PASSWORD` - the app password
+   * `ATP_SERVICE` - optional; your PDS URL. Defaults to `https://bsky.social`.
+2. Make sure `SiteRoot` in `defaultTags.html` is your real public URL.
+3. Run `npm run standard-site:init` once. It creates the publication record and prints
+   a line like `@@ StandardSitePublication=at://did:plc:…/site.standard.publication/…`.
+   Add that line to `defaultTags.html` and deploy.
+4. Run `npm run standard-site:sync` after each deploy. Use `--dry-run` to see what would
+   change. The variables can live in `.env`, which the sync reads too.
+   * **On your own server** (a VPS such as Linode or DigitalOcean), add it to your deploy
+     steps, after pulling the new posts.
+   * **On Heroku** it runs automatically on each deploy (the `release` line in
+     `Procfile`). There, login or PDS errors only log a warning so they can't block a
+     deploy, but invalid posts still fail it. Other hosts ignore the `release` line.
+5. If you schedule posts (a post in a future day's folder), also run the sync once a day,
+   just after midnight in the server's time zone. A scheduled post appears on its day,
+   but it only gets its record at the next sync. On your own server, a crontab line
+   does it:
+
+       5 0 * * * cd /path/to/camel && npm run standard-site:sync >> standard-site.log 2>&1
+
+   On Heroku, use Heroku Scheduler.
+
+Once `StandardSitePublication` is set, Camel serves `/.well-known/site.standard.publication`
+and adds the verification `<link>` tags to each page's `<head>`.
+
+The sync creates a record for each new post, updates records for changed posts, and
+deletes records for posts that were removed. It checks each record before writing,
+because PDSes store these records without checking them. To credit co-authors, add
+`@@ Contributors=did:plc:…, did:plc:…` to a post.
+
+A post's `@@ Image` becomes its cover image, which apps show on the post's card.
+Images on your own site (`/images/…` or `SiteRoot/images/…`) are read from `public/`;
+other URLs are downloaded. Covers must be PNG, JPEG, GIF or WebP and at most 1 MB.
+An image is only uploaded again when it changes. The site-wide `@@ Image` in
+`defaultTags.html` is not used as a cover.
+
+Each record's key is derived from the publication and the post's date and URL. Changing any of them replaces
+the record with a new one, which breaks existing Bluesky embeds of that post.
 
 
 # Quirks

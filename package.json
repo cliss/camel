@@ -50,10 +50,13 @@
   "bugs": "https://github.com/cliss/camel/issues",
   "scripts": {
     "start": "nodemon ./camel.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "standard-site:init": "node scripts/standard-site-sync.js --init",
+    "standard-site:sync": "node scripts/standard-site-sync.js",
+    "test": "node --test test/*.test.js"
   },
   "license": "MIT",
   "dependencies": {
+    "@atproto/api": "^0.27.0",
     "basic-auth": "^1.0.4",
     "body-parser": "^1.15.1",
     "compression": "^1.8.1",
@@ -68,6 +71,6 @@
     "underscore": "^1.13.3"
   },
   "engines": {
-    "node": "0.12.x"
+    "node": ">=22"
   }
 }

@@ -1,0 +1,22 @@
+# Compose overlay that adds Camel to an Atmosphere in a Box sandbox.
+# box-test.sh sets CAMEL_SITE, CAMEL_MODULES and CAMEL_BOX_FILES.
+services:
+  blog:
+    image: node:24-bookworm-slim
+    networks: [atmosinabox]
+    dns: ['${SANDBOX_DNS_IP:-172.30.249.3}']
+    working_dir: /app
+    environment:
+      PORT: '5000'
+      NODE_EXTRA_CA_CERTS: /ca/root.crt
+    volumes:
+      - public-ca:/ca:ro
+      - ${CAMEL_SITE}:/app
+      - ${CAMEL_MODULES}:/app/node_modules:ro
+    command: ['node', 'camel.js']
+  gateway:
+    volumes:
+      - ${CAMEL_BOX_FILES}/blog.caddy:/etc/caddy/routes/blog.caddy:ro
+  dns:
+    volumes:
+      - ${CAMEL_BOX_FILES}/blog.server:/config/zones/blog.server:ro

@@ -1,0 +1,7 @@
+# Resolves blog.atmosbox.test to the box's gateway (default subnet).
+blog.atmosbox.test:53 {
+  errors
+  hosts {
+    172.30.249.2 blog.atmosbox.test
+  }
+}
